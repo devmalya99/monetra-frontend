@@ -30,7 +30,13 @@ See [ACCOMPLISHMENTS.md](./ACCOMPLISHMENTS.md) for a detailed breakdown of the e
    npm run dev
    ```
 
-3. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Set up environment variables:
+   Create a `.env.local` file in the root directory:
+   ```bash
+   NEXT_PUBLIC_BACKEND_URL=http://localhost:9100
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Project Structure
 - `src/app`: Application routes and pages
