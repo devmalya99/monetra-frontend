@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Plus, Loader2 } from 'lucide-react';
-import api from '@/lib/axios';
+import { expensesApi } from '@/lib/api/expenses';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -74,13 +74,11 @@ export function AddExpenseDialog({ onExpenseAdded }: AddExpenseDialogProps) {
         setError(null);
 
         try {
-            // The backend expects amount (string), title, category, date
-            // userId is extracted from token automatically
-            await api.post('/user/add-expense', {
+            await expensesApi.add({
                 title: data.title,
                 category: data.category,
-                amount: String(data.amount), // Send as string explicitly
-                date: new Date(data.date).toISOString(), // Ensure ISO format for backend
+                amount: String(data.amount),
+                date: new Date(data.date).toISOString(),
             });
 
             setOpen(false);

@@ -4,30 +4,9 @@ import { useEffect, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, CreditCard, Activity, TrendingUp, Trash2, Loader2, ArrowUp, ArrowDown } from "lucide-react";
 import { AddExpenseDialog } from "@/components/dashboard/add-expense-dialog";
-import api from '@/lib/axios';
 import { Button } from "@/components/ui/button";
 import { format } from 'date-fns';
-
-interface Expense {
-    id: string;
-    userId: string;
-    title: string;
-    amount: string;
-    category: string;
-    date: string;
-    createdAt?: string;
-    updatedAt?: string;
-}
-
-interface ApiResponse<T> {
-    status: string;
-    results: number;
-    data: T;
-}
-
-interface ExpensesData {
-    expenses: Expense[];
-}
+import { expensesApi, type Expense } from '@/lib/api/expenses';
 
 export default function DashboardPage() {
     const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -37,15 +16,8 @@ export default function DashboardPage() {
     const fetchExpenses = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await api.get<ApiResponse<ExpensesData>>('/user/my-expenses');
-
-            if (response.data.status === 'success' && response.data.data && Array.isArray(response.data.data.expenses)) {
-                setExpenses(response.data.data.expenses);
-            } else {
-                console.warn('Unexpected API response structure:', response.data);
-                setExpenses([]);
-            }
-
+            const data = await expensesApi.getAll();
+            setExpenses(data);
             setError(null);
         } catch (err) {
             console.error('Failed to fetch expenses:', err);
@@ -63,7 +35,7 @@ export default function DashboardPage() {
         if (!confirm('Are you sure you want to delete this expense?')) return;
 
         try {
-            await api.delete(`/user/delete-expense/${id}`);
+            await expensesApi.delete(id);
             // Force refetch to show fresh data
             fetchExpenses();
         } catch (err) {
