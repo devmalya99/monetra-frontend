@@ -36,7 +36,21 @@ The frontend is built with a **Design System-first mindset**, not just "hacking 
 
 ---
 
-## 🏗 3. Architectural Patterns & Code Quality
+## 📱 3. Responsive App Architecture & Premium UI
+We moved beyond simple pages to a fully structured application layout.
+
+-   **App Layout Engine**: Created a dedicated `(app)` route group to isolate authenticated application logic from marketing pages.
+-   **Adaptive Sidebar Navigation**:
+    -   **Desktop**: Implemented a fixed, collapsible sidebar with active state management.
+    -   **Mobile**: Integrated a touch-friendly `Sheet`-based drawer navigation for smaller screens.
+-   **Dashboard Visualization**: Built a high-fidelity financial dashboard with:
+    -   **Stats Cards**: Gradient-enhanced metric cards for at-a-glance financial health.
+    -   **Activity Feed**: Clean transaction lists with positive/negative value styling.
+-   **Profile Management**: Developed a comprehensive settings form using Shadcn primitives (`Card`, `Input`, `Label`) for user data management.
+
+---
+
+## 🏗 4. Architectural Patterns & Code Quality
 Demonstrating an ability to write maintainable, scalable code.
 
 ### **Separation of Concerns (Data vs. UI)**
@@ -55,14 +69,14 @@ Demonstrating an ability to write maintainable, scalable code.
 
 ---
 
-## 🔍 4. SEO & Metadata Strategy
+## 🔍 5. SEO & Metadata Strategy
 -   **Dynamic Metadata**: Configured `metadata` API in `layout.tsx` for fully dynamic title and description injection.
 -   **OpenGraph Support**: Added OG tags and Twitter Card data to ensure shared links look professional on social media.
 -   **Semantic Structure**: Ensured heading hierarchy (`h1` -> `h2` -> `h3`) is logically sound for search engines.
 
 ---
 
-## 🛡 5. Developer Experience (DX)
+## 🛡 6. Developer Experience (DX)
 -   **Linting & Verification**: strict `eslint` configuration (v9) to catch potential bugs early.
 -   **Standardized Utilities**: Created a central `cn()` utility (`clsx` + `tailwind-merge`) to handle className conflicts gracefully—a common pain point in Tailwind projects.
 -   **Clean Folder Structure**:
@@ -73,7 +87,7 @@ Demonstrating an ability to write maintainable, scalable code.
 
 ---
 
-## 6. Backend Integration (FastAPI)
+## 7. Backend Integration (FastAPI)
 We expanded beyond the frontend to build a robust full-stack foundation.
 
 -   **High-Performance API**: Integrated **Python FastAPI** for the backend, chosen for its speed (Starlette) and modern features.

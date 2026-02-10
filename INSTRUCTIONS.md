@@ -58,9 +58,11 @@ This document outlines the step-by-step workflow and planning for the Monetra fr
     - Implemented `Header` component with conditional rendering
     - Added Logout functionality calling backend `/user/logout` endpoint
     - Removed forced authentication redirects to allow public access
-- [ ] **Step 6**: Dashboard/Main App
-  - Protected Routes
-  - User Profile
+- [x] **Step 6**: Dashboard/Main App
+  - [x] **Sidebar**: Created responsive sidebar with mobile support using `Sheet`.
+  - [x] **Dashboard Layout**: Implemented `(app)` route group with dedicated layout.
+  - [x] **Dashboard Page**: Created premium dashboard view with financial stats.
+  - [x] **Profile Page**: Created user settings page with profile inputs.
 
 ### Phase 3: Polish & Optimization
 - [ ] **Step 7**: SEO Optimization
@@ -71,5 +73,5 @@ This document outlines the step-by-step workflow and planning for the Monetra fr
   - Code splitting
 
 ## Current Status
-- **Current Step**: Phase 1, Step 1 (Completed)
+- **Current Step**: Phase 2, Step 6 (Completed)
 - **Next Action**: proceed to Global Styles setup or as directed by user.
