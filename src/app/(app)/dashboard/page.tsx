@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, CreditCard, Activity, TrendingUp } from "lucide-react";
+import { AddExpenseDialog } from "@/components/dashboard/add-expense-dialog";
 
 export default function DashboardPage() {
     return (
@@ -8,6 +9,7 @@ export default function DashboardPage() {
                 <h2 className="text-3xl font-bold tracking-tight bg-linear-to-r from-emerald-400 to-cyan-500 bg-clip-text text-transparent">
                     Dashboard
                 </h2>
+                <AddExpenseDialog />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
