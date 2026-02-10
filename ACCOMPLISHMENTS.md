@@ -43,10 +43,21 @@ We moved beyond simple pages to a fully structured application layout.
 -   **Adaptive Sidebar Navigation**:
     -   **Desktop**: Implemented a fixed, collapsible sidebar with active state management.
     -   **Mobile**: Integrated a touch-friendly `Sheet`-based drawer navigation for smaller screens.
+-   **Delete (Trash)**: Implemented secure deletion with refetch-on-success strategy.
 -   **Dashboard Visualization**: Built a high-fidelity financial dashboard with:
     -   **Stats Cards**: Gradient-enhanced metric cards for at-a-glance financial health.
     -   **Activity Feed**: Clean transaction lists with positive/negative value styling.
 -   **Profile Management**: Developed a comprehensive settings form using Shadcn primitives (`Card`, `Input`, `Label`) for user data management.
+
+### **Expense Management API Integration**
+-   **Real-Time Data**: Connected dashboard to `GET /user/my-expenses` for live data visualization.
+-   **Secure CRUD Operations**:
+    -   **Create**: Implemented `AddExpenseDialog` with Zod validation and string-safe payload handling.
+    -   **Delete**: Added instant expense removal with confirmation dialogs.
+-   **Optimized Data Flow**:
+    -   Created dedicated `src/lib/api/expenses.ts` module.
+    -   Implemented strict TypeScript interfaces (`ApiResponse`, `ExpensesData`) to mirror backend contracts.
+    -   Ensured automatic UI refresh via callback patterns after modifications.
 
 ---
 
