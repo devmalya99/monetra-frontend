@@ -24,6 +24,15 @@ The frontend is built with a **Design System-first mindset**, not just "hacking 
 -   **Theming Engine**: Implemented a robust **Dark/Light mode** system using `next-themes` and CSS variables (`--background`, `--foreground`), ensuring instant, flicker-free theme switching.
 -   **Responsive Design**: Mobile-responsive layouts using standardized breakpoints and Flexbox/Grid systems.
 -   **Semantic HTML**: strictly used semantic tags (`<header>`, `<main>`, `<section>`, `<footer>`) for better accessibility and SEO structure.
+-   **Robust Form Validation**: Implemented industrial-strength form handling using **React Hook Form** combined with **Zod** schema validation.
+    -   Ensured type-safe form data handling.
+    -   Provided real-time feedback and server-side error integration.
+    -   Seamlessly integrated with Axios for backend communication.
+-   **Secure Authentication Architecture**:
+    -   **Zustand Store**: Centralized global user state management.
+    -   **Client Hydration**: Implemented `AuthProvider` pattern to sync client state with HttpOnly cookies via `/user/me`.
+    -   **Middleware Protection**: Leveraged Next.js Middleware (`middleware.ts`) for server-side route guarding.
+    -   **Secure Logout**: Implemented backend-driven logout flow to securely invalidate sessions.
 
 ---
 

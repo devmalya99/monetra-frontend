@@ -41,6 +41,23 @@ This document outlines the step-by-step workflow and planning for the Monetra fr
   - Reused `AuthLayout` for shared UI (social buttons, logo)
   - Styled with Shadcn components (`Label`, `Input`, `Button`)
   - Enabled switching between Sign In / Sign Up states
+  - [x] **Step 5.1**: Signup Integration
+    - Integrated `zod` schema validation for email/password
+    - Implemented `react-hook-form` for form state management
+    - Connected to Backend API (`/user/signup`) with `axios`
+    - Added error handling and success redirection
+  - [x] **Step 5.2**: Signin Integration
+    - Applied same validation & form patterns as Signup
+    - Connected to Backend API (`/user/signin`)
+    - Added `withCredentials: true` for secure cookie handling
+    - Configured redirect to home/dashboard
+  - [x] **Step 5.3**: Auth Persistence & Logout
+    - Implemented `Zustand` store for client-side user state
+    - Created `AuthProvider` to hydrate state from `/user/me`
+    - Added `middleware.ts` for server-side route protection
+    - Implemented `Header` component with conditional rendering
+    - Added Logout functionality calling backend `/user/logout` endpoint
+    - Removed forced authentication redirects to allow public access
 - [ ] **Step 6**: Dashboard/Main App
   - Protected Routes
   - User Profile

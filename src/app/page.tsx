@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ModeToggle } from '@/components/ui/mode-toggle';
+import { Header } from '@/components/layout/header';
 import {
   ArrowRight,
   ShieldCheck,
@@ -21,36 +21,7 @@ export default function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* 1. HEADER */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-8">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-            <span className="text-xl font-bold tracking-tight">Monetra</span>
-          </div>
-
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-            {footer.links.product.map((link) => (
-              <Link key={link.label} href={link.href} className="transition-colors hover:text-foreground">
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <ModeToggle />
-            <div className="hidden sm:flex gap-2">
-              <Link href="/signin">
-                <Button variant="ghost" size="sm">Log in</Button>
-              </Link>
-              <Link href="/signup">
-                <Button size="sm">Start Tracking</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="flex-1">
         {/* 2. HERO SECTION */}
