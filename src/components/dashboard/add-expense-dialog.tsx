@@ -45,7 +45,11 @@ const CATEGORIES = [
     'Other',
 ];
 
-export function AddExpenseDialog() {
+interface AddExpenseDialogProps {
+    onExpenseAdded?: () => void;
+}
+
+export function AddExpenseDialog({ onExpenseAdded }: AddExpenseDialogProps) {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -81,7 +85,9 @@ export function AddExpenseDialog() {
 
             setOpen(false);
             reset();
-            // Ideally, we would trigger a refresh of the dashboard data here
+            if (onExpenseAdded) {
+                onExpenseAdded();
+            }
             console.log('Expense added successfully');
         } catch (err: any) {
             console.error('Failed to add expense:', err);
