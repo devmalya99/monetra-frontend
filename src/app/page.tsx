@@ -41,7 +41,7 @@ export default function LandingPage() {
               </p>
             </div>
             <div className="flex flex-col gap-4 sm:flex-row">
-              <Link href="/signup">
+              <Link href="/dashboard">
                 <Button size="lg" className="w-full sm:w-auto px-8 gap-2">
                   {hero.primaryCta} <ArrowRight className="h-4 w-4" />
                 </Button>

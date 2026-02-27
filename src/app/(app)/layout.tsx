@@ -1,5 +1,4 @@
-import { Navbar } from '@/components/layout/navbar';
-import { Sidebar } from '@/components/layout/sidebar';
+import { AppHeader } from '@/components/layout/app-header';
 
 export default function AppLayout({
     children,
@@ -7,12 +6,9 @@ export default function AppLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="h-full relative min-h-screen bg-gray-900">
-            <div className="hidden h-full md:flex md:w-72 md:flex-col md:fixed md:inset-y-0 z-80 bg-gray-900 border-r border-gray-800">
-                <Sidebar className="h-full bg-gray-900 border-r border-gray-800" />
-            </div>
-            <main className="md:pl-72 min-h-screen flex flex-col">
-                <Navbar />
+        <div className="min-h-screen bg-[#f8fafc] flex flex-col font-sans">
+            <AppHeader />
+            <main className="flex-1 flex flex-col">
                 {children}
             </main>
         </div>
