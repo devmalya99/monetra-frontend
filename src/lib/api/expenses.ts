@@ -65,5 +65,15 @@ export const expensesApi = {
             console.warn('Failed to fetch monthly balance:', error);
             return { allocatedBalance: 0 };
         }
+    },
+
+    getTopCategories: async (limit: number = 3): Promise<Array<{ category: string; totalAmount: number }>> => {
+        try {
+            const response = await api.get(`/user/top-categories?limit=${limit}`);
+            return response.data?.data?.topCategories || [];
+        } catch (error) {
+            console.warn('Failed to fetch top categories:', error);
+            return [];
+        }
     }
 };

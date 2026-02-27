@@ -12,6 +12,7 @@ import { AddBalanceDialog } from "@/components/dashboard/add-balance-dialog";
 export default function DashboardPage() {
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [totalExpense, setTotalExpense] = useState<number>(0);
+    const [topCategories, setTopCategories] = useState<{ category: string; totalAmount: number }[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [dummyBudget, setDummyBudget] = useState(45000); // Changed to state
@@ -44,10 +45,20 @@ export default function DashboardPage() {
         }
     }, []);
 
+    const fetchTopCategories = useCallback(async () => {
+        try {
+            const data = await expensesApi.getTopCategories(3);
+            setTopCategories(data);
+        } catch (err) {
+            console.error('Failed to fetch top categories:', err);
+        }
+    }, []);
+
     useEffect(() => {
         fetchExpenses();
         fetchBalance();
-    }, [fetchExpenses, fetchBalance]);
+        fetchTopCategories();
+    }, [fetchExpenses, fetchBalance, fetchTopCategories]);
 
     // Map the actual backend total expense into our current spend UI.
     const dummyCurrentSpend = totalExpense > 0 ? totalExpense : 0;
@@ -277,27 +288,25 @@ export default function DashboardPage() {
                             <div className="pt-2">
                                 <h3 className="text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-6">Top Categories</h3>
                                 <div className="space-y-5">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-2.5 h-2.5 rounded-full bg-blue-400" />
-                                            <span className="text-sm font-semibold text-slate-600">Shopping</span>
+                                    {topCategories && topCategories.length > 0 ? (
+                                        topCategories.slice(0, 5).map((cat, idx) => {
+                                            const colors = ['bg-blue-400', 'bg-amber-400', 'bg-purple-400', 'bg-emerald-400', 'bg-rose-400'];
+                                            return (
+                                                <div key={idx} className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={cn("w-2.5 h-2.5 rounded-full", colors[idx % colors.length])} />
+                                                        <span className="text-sm font-semibold text-slate-600">{cat.category}</span>
+                                                    </div>
+                                                    <span className="text-sm font-bold text-slate-800">{formatINR(cat.totalAmount).replace('.00', '')}</span>
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <div className="text-center py-6">
+                                            <p className="text-sm font-medium text-slate-500 mb-1">No spend data yet</p>
+                                            <p className="text-xs text-slate-400">Add some expenses to see your top categories breakdown here.</p>
                                         </div>
-                                        <span className="text-sm font-bold text-slate-800">₹12,400</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                                            <span className="text-sm font-semibold text-slate-600">Food</span>
-                                        </div>
-                                        <span className="text-sm font-bold text-slate-800">₹8,100</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-2.5 h-2.5 rounded-full bg-purple-400" />
-                                            <span className="text-sm font-semibold text-slate-600">Bills</span>
-                                        </div>
-                                        <span className="text-sm font-bold text-slate-800">₹5,000</span>
-                                    </div>
+                                    )}
                                 </div>
                             </div>
                         </Card>

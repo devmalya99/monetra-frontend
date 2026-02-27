@@ -94,7 +94,7 @@ export default function InvestmentsPage() {
                                 <span className="text-slate-400 text-3xl">.00</span>
                             </span>
                             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-bold bg-emerald-50 text-emerald-600">
-                                <TrendingUp className="w-4 h-4 mr-1 stroke-[3]" />
+                                <TrendingUp className="w-4 h-4 mr-1 stroke-3" />
                                 +18.4%
                             </span>
                         </div>
@@ -120,10 +120,10 @@ export default function InvestmentsPage() {
                             <h2 className="text-lg font-bold text-slate-800 mb-8">Asset Allocation</h2>
                             <div className="flex flex-col sm:flex-row items-center gap-10">
                                 {/* Simulated Donut Chart */}
-                                <div className="relative w-48 h-48 rounded-full border-[20px] border-slate-100 shrink-0 flex items-center justify-center">
-                                    <div className="absolute inset-0 rounded-full border-[20px] border-emerald-400 border-t-emerald-400 border-r-emerald-400 border-b-transparent border-l-transparent -rotate-45"></div>
-                                    <div className="absolute inset-0 rounded-full border-[20px] border-indigo-400 border-t-transparent border-r-transparent border-b-indigo-400 border-l-transparent rotate-12"></div>
-                                    <div className="absolute inset-0 rounded-full border-[20px] border-amber-400 border-t-transparent border-r-transparent border-b-transparent border-l-amber-400 -rotate-[60deg]"></div>
+                                <div className="relative w-48 h-48 rounded-full border-20 border-slate-100 shrink-0 flex items-center justify-center">
+                                    <div className="absolute inset-0 rounded-full border-20 border-emerald-400 border-t-emerald-400 border-r-emerald-400 border-b-transparent border-l-transparent -rotate-45"></div>
+                                    <div className="absolute inset-0 rounded-full border-20 border-indigo-400 border-t-transparent border-r-transparent border-b-indigo-400 border-l-transparent rotate-12"></div>
+                                    <div className="absolute inset-0 rounded-full border-20 border-amber-400 border-t-transparent border-r-transparent border-b-transparent border-l-amber-400 -rotate-60"></div>
                                     <div className="text-center">
                                         <div className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Diverse</div>
                                         <div className="text-lg font-bold text-slate-800">Balanced</div>
@@ -236,7 +236,7 @@ export default function InvestmentsPage() {
                         {/* Market Trends */}
                         <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 sm:p-8">
                             <div className="flex items-center gap-2 mb-8">
-                                <TrendingUp className="w-5 h-5 text-emerald-500 stroke-[3]" />
+                                <TrendingUp className="w-5 h-5 text-emerald-500 stroke-3" />
                                 <h2 className="text-lg font-bold text-slate-800">Market Trends</h2>
                             </div>
 

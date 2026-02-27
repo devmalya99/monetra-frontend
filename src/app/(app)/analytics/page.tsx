@@ -153,10 +153,10 @@ export default function AnalyticsPage() {
 
                         <div className="relative w-48 h-48 my-8 shrink-0 flex items-center justify-center">
                             {/* Simulated Donut Chart using CSS Borders */}
-                            <div className="absolute inset-0 rounded-full border-[24px] border-slate-100" />
-                            <div className="absolute inset-0 rounded-full border-[24px] border-blue-400 border-t-blue-400 border-r-blue-400 border-b-transparent border-l-transparent -rotate-12" />
-                            <div className="absolute inset-0 rounded-full border-[24px] border-emerald-400 border-t-transparent border-r-emerald-400 border-b-emerald-400 border-l-transparent rotate-[70deg]" />
-                            <div className="absolute inset-0 rounded-full border-[24px] border-rose-400 border-t-transparent border-r-transparent border-b-rose-400 border-l-rose-400 -rotate-45" />
+                            <div className="absolute inset-0 rounded-full border-24 border-slate-100" />
+                            <div className="absolute inset-0 rounded-full border-24 border-blue-400 border-t-blue-400 border-r-blue-400 border-b-transparent border-l-transparent -rotate-12" />
+                            <div className="absolute inset-0 rounded-full border-24 border-emerald-400 border-t-transparent border-r-emerald-400 border-b-emerald-400 border-l-transparent rotate-70" />
+                            <div className="absolute inset-0 rounded-full border-24 border-rose-400 border-t-transparent border-r-transparent border-b-rose-400 border-l-rose-400 -rotate-45" />
 
                             <div className="text-center bg-white w-32 h-32 rounded-full absolute flex flex-col items-center justify-center shadow-xs">
                                 <span className="text-2xl font-bold text-slate-800">$3.4k</span>
@@ -198,7 +198,7 @@ export default function AnalyticsPage() {
                 </div>
 
                 {/* Bottom Row Predictive */}
-                <Card className="border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 sm:p-10 relative overflow-hidden bg-gradient-to-r from-white to-blue-50/30">
+                <Card className="border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 sm:p-10 relative overflow-hidden bg-linear-to-r from-white to-blue-50/30">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20">
                         <div className="space-y-6">
                             <span className="inline-flex items-center px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest bg-indigo-50 text-indigo-600 uppercase">
