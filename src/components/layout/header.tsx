@@ -9,10 +9,14 @@ import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/store/user-store';
 import api from '@/lib/axios';
 import { landingPageContent } from '@/data/landing-page';
+import { useState, useEffect } from 'react';
 
 export function Header() {
-    const { isAuthenticated, clearUser } = useUserStore();
+    const { isAuthenticated, user, clearUser } = useUserStore();
+    const [mounted, setMounted] = useState(false);
     const router = useRouter();
+
+    useEffect(() => setMounted(true), [mounted, isAuthenticated, user]);
 
     const handleLogout = async () => {
         try {
@@ -26,6 +30,10 @@ export function Header() {
             router.push('/');
         }
     };
+
+    
+
+
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -48,30 +56,34 @@ export function Header() {
                 <div className="flex items-center gap-4">
                     <ModeToggle />
 
-                    {isAuthenticated ? (
-                        <div className="flex items-center gap-2">
-                            <Link href="/dashboard">
-                                <Button variant="ghost" size="sm">Dashboard</Button>
-                            </Link>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={handleLogout}
-                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                            >
-                                <LogOut className="h-4 w-4 mr-2" />
-                                Logout
-                            </Button>
-                        </div>
+                    {mounted ? (
+                        isAuthenticated ? (
+                            <div className="flex items-center gap-2">
+                                <Link href="/dashboard">
+                                    <Button variant="ghost" size="sm">Dashboard</Button>
+                                </Link>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleLogout}
+                                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                >
+                                    <LogOut className="h-4 w-4 mr-2" />
+                                    Logout
+                                </Button>
+                            </div>
+                        ) : (
+                            <div className="hidden sm:flex gap-2">
+                                <Link href="/signin">
+                                    <Button variant="ghost" size="sm">Log in</Button>
+                                </Link>
+                                <Link href="/signup">
+                                    <Button size="sm">Start Tracking</Button>
+                                </Link>
+                            </div>
+                        )
                     ) : (
-                        <div className="hidden sm:flex gap-2">
-                            <Link href="/signin">
-                                <Button variant="ghost" size="sm">Log in</Button>
-                            </Link>
-                            <Link href="/signup">
-                                <Button size="sm">Start Tracking</Button>
-                            </Link>
-                        </div>
+                        <div className="w-[180px] h-9" /> // Skeleton / placeholder to prevent layout shift
                     )}
                 </div>
             </div>

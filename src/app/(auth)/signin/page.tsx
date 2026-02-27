@@ -20,6 +20,7 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { useUserStore } from '@/store/user-store';
 
 const signinSchema = z.object({
     email: z.email({ message: "Invalid email address" }),
@@ -30,6 +31,7 @@ type SigninFormValues = z.infer<typeof signinSchema>;
 
 export default function SignInPage() {
     const router = useRouter();
+    const { setUser } = useUserStore();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -68,6 +70,14 @@ export default function SignInPage() {
             });
 
             console.log('✅ Step 3: Signin successful!', response.data);
+
+            // Immediately store user in Zustand
+            if (response.data?.user) {
+                setUser(response.data.user);
+            } else if (response.data) {
+                // Fallback in case the user object is exactly the data response
+                setUser(response.data);
+            }
 
             // Redirect to dashboard on success
             // TODO: Update this route once the dashboard is ready

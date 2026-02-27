@@ -67,7 +67,7 @@ This document outlines the step-by-step workflow and planning for the Monetra fr
   - Created `Dialog` UI component.
   - Implemented `AddExpenseDialog` with Zod validation.
   - Connected to `POST /user/add-expense` endpoint.
-- [x] **Step 6.2**: Expense Management (Fetch & Delete)
+ - [x] **Step 6.2**: Expense Management (Fetch & Delete)
   - Integrated `GET /user/my-expenses` to display real data.
   - Added delete functionality with `DELETE /user/delete-expense/:id` and confirmation.
   - Refactored API logic to `src/lib/api/expenses.ts` for cleaner architecture.
