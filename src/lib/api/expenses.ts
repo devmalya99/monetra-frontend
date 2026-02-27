@@ -25,20 +25,24 @@ interface ApiResponse<T> {
 }
 
 interface ExpensesData {
+    totalExpense?: number;
     expenses: Expense[];
 }
 
 export const expensesApi = {
-    getAll: async (): Promise<Expense[]> => {
+    getAll: async (): Promise<{ expenses: Expense[], totalExpense: number }> => {
         const response = await api.get<ApiResponse<ExpensesData>>('/user/my-expenses');
 
         // Centralize response parsing logic
         if (response.data.status === 'success' && response.data.data && Array.isArray(response.data.data.expenses)) {
-            return response.data.data.expenses;
+            return {
+                expenses: response.data.data.expenses,
+                totalExpense: response.data.data.totalExpense || 0
+            };
         }
 
         console.warn('Unexpected API response structure:', response.data);
-        return [];
+        return { expenses: [], totalExpense: 0 };
     },
 
     delete: async (id: string): Promise<void> => {
@@ -47,5 +51,19 @@ export const expensesApi = {
 
     add: async (payload: AddExpensePayload): Promise<void> => {
         await api.post('/user/add-expense', payload);
+    },
+
+    updateBalance: async (payload: { amount: number }): Promise<void> => {
+        await api.post('/user/update-balance', payload);
+    },
+
+    getMonthlyBalance: async (): Promise<{ allocatedBalance: number }> => {
+        try {
+            const response = await api.get('/user/monthly-balance');
+            return { allocatedBalance: response.data?.data?.allocatedBalance || 0 };
+        } catch (error) {
+            console.warn('Failed to fetch monthly balance:', error);
+            return { allocatedBalance: 0 };
+        }
     }
 };
