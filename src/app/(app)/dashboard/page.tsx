@@ -7,11 +7,14 @@ import { AddExpenseDialog } from "@/components/dashboard/add-expense-dialog";
 import { format } from 'date-fns';
 import { expensesApi, type Expense } from '@/lib/api/expenses';
 import { cn } from '@/lib/utils';
+import { AddBalanceDialog } from "@/components/dashboard/add-balance-dialog";
 
 export default function DashboardPage() {
     const [expenses, setExpenses] = useState<Expense[]>([]);
+    const [totalExpense, setTotalExpense] = useState<number>(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [dummyBudget, setDummyBudget] = useState(45000); // Changed to state
 
     useEffect(() => {
         console.log('🌟 [STEP: UI Update] -> Loaded Beautiful Premium Dashboard Design!');
@@ -21,7 +24,8 @@ export default function DashboardPage() {
         try {
             setLoading(true);
             const data = await expensesApi.getAll();
-            setExpenses(data);
+            setExpenses(data.expenses);
+            setTotalExpense(data.totalExpense);
             setError(null);
         } catch (err) {
             console.error('Failed to fetch expenses:', err);
@@ -31,18 +35,27 @@ export default function DashboardPage() {
         }
     }, []);
 
+    const fetchBalance = useCallback(async () => {
+        try {
+            const data = await expensesApi.getMonthlyBalance();
+            setDummyBudget(data.allocatedBalance);
+        } catch (err) {
+            console.error('Failed to fetch balance:', err);
+        }
+    }, []);
+
     useEffect(() => {
         fetchExpenses();
-    }, [fetchExpenses]);
+        fetchBalance();
+    }, [fetchExpenses, fetchBalance]);
 
-    // Dummy values mimicking the design layout since we only have expense data
-    // Later these can be dynamically calculated when income feature is added
-    const dummyTotalBalance = 428450.00;
-    const dummyInvested = 310000.00;
-    const dummyCash = 118450.00;
-    const dummyCurrentSpend = 28500.00;
-    const dummyBudget = 45000.00;
+    // Map the actual backend total expense into our current spend UI.
+    const dummyCurrentSpend = totalExpense > 0 ? totalExpense : 0;
     const dummyBudgetLeft = dummyBudget - dummyCurrentSpend;
+
+    // Use Budget Left as the Total Balance now that Cash/Invested are removed
+    const dummyTotalBalance = dummyBudgetLeft;
+
     const budgetPercent = Math.min((dummyCurrentSpend / dummyBudget) * 100, 100);
 
     // Format currency to INR format
@@ -101,16 +114,6 @@ export default function DashboardPage() {
                             </div>
                         </div>
 
-                        <div className="flex gap-8 md:gap-16 pt-6 md:pt-0 border-t md:border-t-0 border-slate-100">
-                            <div>
-                                <h3 className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-2">Invested</h3>
-                                <span className="text-xl sm:text-2xl font-bold text-slate-700">{formatINR(dummyInvested).replace('.00', '')}</span>
-                            </div>
-                            <div>
-                                <h3 className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-2">Cash</h3>
-                                <span className="text-xl sm:text-2xl font-bold text-slate-700">{formatINR(dummyCash).replace('.00', '')}</span>
-                            </div>
-                        </div>
                     </div>
                 </Card>
 
@@ -324,8 +327,9 @@ export default function DashboardPage() {
                 </div>
             </footer>
 
-            {/* Floating Action Button for Add Expense */}
-            <div className="fixed bottom-8 right-8 z-50">
+            {/* Floating Action Buttons */}
+            <div className="fixed bottom-8 right-8 z-50 flex flex-col items-end gap-3">
+                <AddBalanceDialog onBudgetUpdate={setDummyBudget} />
                 <AddExpenseDialog onExpenseAdded={fetchExpenses} />
             </div>
         </div>

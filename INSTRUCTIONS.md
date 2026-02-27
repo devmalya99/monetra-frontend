@@ -76,8 +76,12 @@ This document outlines the step-by-step workflow and planning for the Monetra fr
 - [x] **Step 6.3**: Premium Dashboard Layout & Design Update
   - Replaced legacy sidebar with a clean, universal Top Navigation (`AppHeader`).
   - Redesigned the Dashboard (`page.tsx`) to match a high-fidelity, clean minimal UI.
-  - Added Premium Banner, active states, progress bars, and intelligent empty states.
-- [x] **Step 6.4**: Settings Page UI Revamp
+  - [x] Integrate Premium Top Navigation System.
+- [x] Create Advanced Dashboard with High-Fidelity dummy data for empty states.
+- [x] Create Floating Action Buttons for quick interactions.
+- [x] **New:** Built the "Set Budget / Top Up" tracking dialog adjacent to Add Expense.
+
+### Step 6.4: Settings & Investments Pages
   - Built a 2-column layout for the settings page mimicking premium platform architecture.
   - Added specialized sidebar navigation components with active indicators.
   - Implemented segmented UI Cards (Profile, Subscription, Preferences) with detailed layouts.

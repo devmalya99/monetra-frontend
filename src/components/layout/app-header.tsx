@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ShieldCheck, Bell, Search, Star } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { PremiumFeatureDialog } from '@/components/shared/premium-feature-dialog';
 import { cn } from '@/lib/utils';
 
 const routes = [
@@ -59,12 +60,7 @@ export function AppHeader() {
                         />
                     </div>
 
-                    <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-indigo-100 bg-indigo-50/50 text-indigo-600 text-xs font-bold cursor-pointer hover:bg-indigo-50 transition-colors">
-                        <div className="w-3.5 h-3.5 rounded-full bg-indigo-600 flex items-center justify-center text-white">
-                            <Star className="w-2.5 h-2.5 fill-white" />
-                        </div>
-                        Premium
-                    </div>
+                    <PremiumFeatureDialog />
 
                     <button className="text-slate-400 hover:text-slate-600 transition-colors p-2 relative">
                         <Bell className="w-5 h-5" />

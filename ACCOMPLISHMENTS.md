@@ -53,7 +53,8 @@ We moved beyond simple pages to a fully structured application layout.
 -   **Investments Portfolio View**: Created an enterprise-grade investments dashboard simulating holding metrics, market trends, and asset allocation data.
 
 ### **Expense Management API Integration**
--   **Real-Time Data**: Connected dashboard to `GET /user/my-expenses` for live data visualization.
+-   **Real-Time Data**: Connected dashboard to `GET /user/my-expenses` for live data visualization. Built dynamic current-spend simulation tied directly to actual recorded expenses.
+-   **Dynamic Budget Allocation**: Created a premium `AddBalanceDialog` component (similar to add expense) to set custom monthly budgets, with interactive real-time updates mapping directly to the "Budget Left" UI and progress meter.
 -   **Secure CRUD Operations**:
     -   **Create**: Implemented `AddExpenseDialog` with Zod validation and string-safe payload handling.
     -   **Delete**: Added instant expense removal with confirmation dialogs.
