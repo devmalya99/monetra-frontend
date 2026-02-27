@@ -63,6 +63,9 @@ We moved beyond simple pages to a fully structured application layout.
     -   Implemented strict TypeScript interfaces (`ApiResponse`, `ExpensesData`) to mirror backend contracts.
     -   Ensured automatic UI refresh via callback patterns after modifications.
 
+### **Premium Features & Memberships**
+-   **Dynamic Premium Plans**: Refactored the `PremiumFeatureDialog` to fetch live subscription tiers via `GET /premium/memberships` instead of static hardcoding, featuring loading states, detailed feature comparisons, and mapped server data seamlessly integrating with the UI.
+
 ---
 
 ## 🏗 4. Architectural Patterns & Code Quality
