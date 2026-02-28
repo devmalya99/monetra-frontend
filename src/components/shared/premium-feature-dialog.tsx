@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Star, Crown, Check, X, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription, DialogHeader } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import axiosInstance from '@/lib/axios';
+import { load } from "@cashfreepayments/cashfree-js";
+
 
 interface PremiumFeatureDialogProps {
     children?: React.ReactNode;
@@ -52,6 +54,23 @@ export function PremiumFeatureDialog({ children, triggerClassName }: PremiumFeat
     const [plans, setPlans] = useState<Plan[]>([]);
     const [loading, setLoading] = useState(false);
     const [verifyingId, setVerifyingId] = useState<string | null>(null);
+
+
+
+    const cashfreeRef = useRef<any>(null);
+
+    useEffect(() => {
+        const init = async () => {
+            try {
+                // Load once on mount and store in ref
+                // Use production mode to align with backend production keys
+                cashfreeRef.current = await load({ mode: "production" });
+            } catch (e) {
+                console.error("SDK Initialization failed", e);
+            }
+        };
+        init();
+    }, []);
 
     useEffect(() => {
         if (open && plans.length === 0) {
@@ -105,20 +124,44 @@ export function PremiumFeatureDialog({ children, triggerClassName }: PremiumFeat
     }, [open, plans.length]);
 
     const handlePlanSelection = async (planId: string) => {
-        console.log(`🚀 [PremiumFeatureDialog] Step 5: Initiating order verification for plan ID: ${planId}...`);
-        setVerifyingId(planId);
+        // Ensure the SDK is ready before proceeding
+        if (!cashfreeRef.current) {
+            console.error("SDK not loaded");
+            return;
+        }
+
         try {
+            setVerifyingId(planId);
             const response = await axiosInstance.post('/premium/verify-order', {
-                id: planId
+                membership_id: planId
             });
-            console.log("✅ [PremiumFeatureDialog] Step 6: Order verified successfully:", response.data);
+
+            // Use the persisted ref
+            let checkoutOptions = {
+                paymentSessionId: response.data.data.payment_session_id,
+                redirectTarget: "_modal",  // opens as popup modal
+            };
+
+            // Handle the promise returned by checkout
+            const result = await cashfreeRef.current.checkout(checkoutOptions);
+
+            if (result.error) {
+                console.log("Payment error", result.error);
+            }
+            if (result.paymentDetails) {
+                console.log("Payment completed", result.paymentDetails.paymentMessage);
+            }
+
+            // Log the result to see if payment was completed or cancelled
+            console.log("Payment Result:", result);
         } catch (error) {
-            console.error("❌ [PremiumFeatureDialog] Error: Failed to verify order", error);
+            console.error("Verification failed", error);
         } finally {
             setVerifyingId(null);
-            console.log("🏁 [PremiumFeatureDialog] Step 7: Finished order verification process.");
         }
     };
+
+
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>

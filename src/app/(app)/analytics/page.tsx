@@ -1,14 +1,41 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { TrendingUp, HeartPulse, Banknote, PiggyBank, ArrowRight, Sparkles } from 'lucide-react';
+import { TrendingUp, HeartPulse, Banknote, PiggyBank, ArrowRight, Sparkles, Trophy, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import axiosInstance from '@/lib/axios';
+
+interface LeaderboardUser {
+    rank: number;
+    email: string;
+    totalSpent: number;
+}
 
 export default function AnalyticsPage() {
+    const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
+    const [currentUser, setCurrentUser] = useState<LeaderboardUser | null>(null);
+    const [loadingLeaderboard, setLoadingLeaderboard] = useState(true);
+
     useEffect(() => {
         console.log('🌟 [STEP: UI Update] -> Loaded Beautiful Premium Analytics Dashboard Design!');
+        console.log('🏆 [STEP: Feature Add] -> Added Dynamic Top Spenders Leaderboard in Analytics!');
+
+        const fetchLeaderboard = async () => {
+            try {
+                const response = await axiosInstance.get('/premium/leaderboard');
+                if (response.data?.status === 'success') {
+                    setLeaderboard(response.data.data.top10 || []);
+                    setCurrentUser(response.data.data.currentUser || null);
+                }
+            } catch (error) {
+                console.error("Failed to fetch leaderboard", error);
+            } finally {
+                setLoadingLeaderboard(false);
+            }
+        };
+        fetchLeaderboard();
     }, []);
 
     // Mock bar chart data logic
@@ -34,168 +61,243 @@ export default function AnalyticsPage() {
                     </div>
                 </div>
 
-                {/* Top Row Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Financial Health */}
-                    <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 relative overflow-hidden">
-                        <div className="flex justify-between items-start mb-4">
-                            <h3 className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">Financial Health</h3>
-                            <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
-                                <HeartPulse className="w-4 h-4 text-emerald-600 fill-emerald-600" />
-                            </div>
-                        </div>
-                        <div className="flex items-baseline gap-1 mb-6">
-                            <span className="text-4xl font-bold text-slate-900">82</span>
-                            <span className="text-sm font-bold text-slate-400">/100</span>
-                        </div>
-                        <div className="w-full h-2 bg-slate-100 rounded-full mb-3">
-                            <div className="w-[82%] h-full bg-emerald-500 rounded-full"></div>
-                        </div>
-                        <div className="flex items-center gap-1.5 mt-auto pt-2">
-                            <TrendingUp className="w-3.5 h-3.5 text-emerald-500 stroke-3" />
-                            <span className="text-xs font-bold text-emerald-500">+5% from last month</span>
-                        </div>
-                    </Card>
-
-                    {/* Monthly Spending */}
-                    <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 relative overflow-hidden">
-                        <div className="flex justify-between items-start mb-4">
-                            <h3 className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">Monthly Spending</h3>
-                            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                                <Banknote className="w-4 h-4 text-blue-600" />
-                            </div>
-                        </div>
-                        <div className="mb-2">
-                            <span className="text-4xl font-bold text-slate-900">$3,420</span>
-                        </div>
-                        <div className="text-xs font-medium text-slate-500 mb-5">
-                            Predicted peak: $3,500
-                        </div>
-                        <div className="flex items-end gap-1 h-6 mt-auto">
-                            {/* Dummy mini bar chart */}
-                            <div className="w-full flex gap-1.5 opacity-60">
-                                <div className="h-2 flex-1 bg-blue-100 rounded-full" />
-                                <div className="h-3 flex-1 bg-blue-100 rounded-full" />
-                                <div className="h-4 flex-1 bg-blue-100 rounded-full" />
-                                <div className="h-6 flex-1 bg-blue-500 rounded-full" />
-                                <div className="h-3 flex-1 bg-slate-100 rounded-full" />
-                                <div className="h-2 flex-1 bg-slate-100 rounded-full" />
-                            </div>
-                        </div>
-                    </Card>
-
-                    {/* Savings Ratio */}
-                    <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 relative overflow-hidden">
-                        <div className="flex justify-between items-start mb-4">
-                            <h3 className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">Savings Ratio</h3>
-                            <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
-                                <PiggyBank className="w-4 h-4 text-rose-500 fill-rose-500" />
-                            </div>
-                        </div>
-                        <div className="mb-3">
-                            <span className="text-4xl font-bold text-slate-900">24%</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 mt-auto pt-2 mb-6">
-                            <TrendingUp className="w-3.5 h-3.5 text-rose-500 stroke-3" />
-                            <span className="text-[11px] font-bold text-rose-500 uppercase tracking-widest">Improving trend</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <div className="w-6 h-6 rounded-full bg-indigo-100 z-10" />
-                            <div className="w-6 h-6 rounded-full bg-emerald-100 -ml-4 z-20" />
-                            <div className="w-6 h-6 rounded-full bg-rose-100 -ml-4 z-30" />
-                        </div>
-                    </Card>
-                </div>
-
-                {/* Middle Row Charts */}
-                <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6">
-                    {/* Spending Trends Chart */}
-                    <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-between">
-                        <div className="w-full flex justify-between items-start mb-10">
-                            <div>
-                                <h2 className="text-[15px] font-bold text-slate-800 mb-1">Monthly Spending Trends</h2>
-                                <p className="text-xs text-slate-400 font-medium">Comparison of actual vs. forecast spending</p>
-                            </div>
-                            <div className="flex gap-4">
-                                <div className="flex items-center gap-1.5">
-                                    <div className="w-2.5 h-2.5 rounded-full bg-blue-400" />
-                                    <span className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Actual</span>
+                <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-8 items-start">
+                    <div className="space-y-8 overflow-hidden">
+                        {/* Top Row Stats */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Financial Health */}
+                            <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 relative overflow-hidden">
+                                <div className="flex justify-between items-start mb-4">
+                                    <h3 className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">Financial Health</h3>
+                                    <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
+                                        <HeartPulse className="w-4 h-4 text-emerald-600 fill-emerald-600" />
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-1.5">
-                                    <div className="w-2.5 h-2.5 rounded-full bg-slate-100" />
-                                    <span className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">AI Forecast</span>
+                                <div className="flex items-baseline gap-1 mb-6">
+                                    <span className="text-4xl font-bold text-slate-900">82</span>
+                                    <span className="text-sm font-bold text-slate-400">/100</span>
                                 </div>
-                            </div>
-                        </div>
-
-                        {/* Chart Area */}
-                        <div className="w-full h-48 flex items-end justify-between px-2 gap-2 sm:gap-6 relative z-10">
-                            {days.map((day, idx) => (
-                                <div key={idx} className="flex-1 flex flex-col items-center justify-end h-full relative group">
-                                    <div className="w-full h-full absolute bottom-0 left-0 bg-slate-50 rounded-t-lg shadow-inner" style={{ height: `${forecastHeights[idx]}%` }} />
-                                    <div className="w-full absolute bottom-0 left-0 bg-[#8dbdff] rounded-t-lg transition-all group-hover:bg-[#7bacfb]" style={{ height: `${actualHeights[idx]}%` }} />
+                                <div className="w-full h-2 bg-slate-100 rounded-full mb-3">
+                                    <div className="w-[82%] h-full bg-emerald-500 rounded-full"></div>
                                 </div>
-                            ))}
-                        </div>
-                        <div className="w-full flex justify-between mt-4 px-2 sm:px-6">
-                            {days.map((day, idx) => (
-                                <span key={idx} className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">{day}</span>
-                            ))}
-                        </div>
-                    </Card>
+                                <div className="flex items-center gap-1.5 mt-auto pt-2">
+                                    <TrendingUp className="w-3.5 h-3.5 text-emerald-500 stroke-3" />
+                                    <span className="text-xs font-bold text-emerald-500">+5% from last month</span>
+                                </div>
+                            </Card>
 
-                    {/* Category Breakdown */}
-                    <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-between">
-                        <div className="w-full">
-                            <h2 className="text-[15px] font-bold text-slate-800 mb-1">Category Breakdown</h2>
-                            <p className="text-xs text-slate-400 font-medium">Where your funds go</p>
+                            {/* Monthly Spending */}
+                            <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 relative overflow-hidden">
+                                <div className="flex justify-between items-start mb-4">
+                                    <h3 className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">Monthly Spending</h3>
+                                    <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                                        <Banknote className="w-4 h-4 text-blue-600" />
+                                    </div>
+                                </div>
+                                <div className="mb-2">
+                                    <span className="text-4xl font-bold text-slate-900">$3,420</span>
+                                </div>
+                                <div className="text-xs font-medium text-slate-500 mb-5">
+                                    Predicted peak: $3,500
+                                </div>
+                                <div className="flex items-end gap-1 h-6 mt-auto">
+                                    {/* Dummy mini bar chart */}
+                                    <div className="w-full flex gap-1.5 opacity-60">
+                                        <div className="h-2 flex-1 bg-blue-100 rounded-full" />
+                                        <div className="h-3 flex-1 bg-blue-100 rounded-full" />
+                                        <div className="h-4 flex-1 bg-blue-100 rounded-full" />
+                                        <div className="h-6 flex-1 bg-blue-500 rounded-full" />
+                                        <div className="h-3 flex-1 bg-slate-100 rounded-full" />
+                                        <div className="h-2 flex-1 bg-slate-100 rounded-full" />
+                                    </div>
+                                </div>
+                            </Card>
+
+                            {/* Savings Ratio */}
+                            <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 relative overflow-hidden">
+                                <div className="flex justify-between items-start mb-4">
+                                    <h3 className="text-[11px] font-bold tracking-widest text-slate-400 uppercase">Savings Ratio</h3>
+                                    <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
+                                        <PiggyBank className="w-4 h-4 text-rose-500 fill-rose-500" />
+                                    </div>
+                                </div>
+                                <div className="mb-3">
+                                    <span className="text-4xl font-bold text-slate-900">24%</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 mt-auto pt-2 mb-6">
+                                    <TrendingUp className="w-3.5 h-3.5 text-rose-500 stroke-3" />
+                                    <span className="text-[11px] font-bold text-rose-500 uppercase tracking-widest">Improving trend</span>
+                                </div>
+                                <div className="flex gap-2">
+                                    <div className="w-6 h-6 rounded-full bg-indigo-100 z-10" />
+                                    <div className="w-6 h-6 rounded-full bg-emerald-100 -ml-4 z-20" />
+                                    <div className="w-6 h-6 rounded-full bg-rose-100 -ml-4 z-30" />
+                                </div>
+                            </Card>
                         </div>
 
-                        <div className="relative w-48 h-48 my-8 shrink-0 flex items-center justify-center">
-                            {/* Simulated Donut Chart using CSS Borders */}
-                            <div className="absolute inset-0 rounded-full border-24 border-slate-100" />
-                            <div className="absolute inset-0 rounded-full border-24 border-blue-400 border-t-blue-400 border-r-blue-400 border-b-transparent border-l-transparent -rotate-12" />
-                            <div className="absolute inset-0 rounded-full border-24 border-emerald-400 border-t-transparent border-r-emerald-400 border-b-emerald-400 border-l-transparent rotate-70" />
-                            <div className="absolute inset-0 rounded-full border-24 border-rose-400 border-t-transparent border-r-transparent border-b-rose-400 border-l-rose-400 -rotate-45" />
+                        {/* Middle Row Charts */}
+                        <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6">
+                            {/* Spending Trends Chart */}
+                            <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-between">
+                                <div className="w-full flex justify-between items-start mb-10">
+                                    <div>
+                                        <h2 className="text-[15px] font-bold text-slate-800 mb-1">Monthly Spending Trends</h2>
+                                        <p className="text-xs text-slate-400 font-medium">Comparison of actual vs. forecast spending</p>
+                                    </div>
+                                    <div className="flex gap-4">
+                                        <div className="flex items-center gap-1.5">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-blue-400" />
+                                            <span className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Actual</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-slate-100" />
+                                            <span className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">AI Forecast</span>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <div className="text-center bg-white w-32 h-32 rounded-full absolute flex flex-col items-center justify-center shadow-xs">
-                                <span className="text-2xl font-bold text-slate-800">$3.4k</span>
-                                <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Total</span>
-                            </div>
+                                {/* Chart Area */}
+                                <div className="w-full h-48 flex items-end justify-between px-2 gap-2 sm:gap-6 relative z-10">
+                                    {days.map((day, idx) => (
+                                        <div key={idx} className="flex-1 flex flex-col items-center justify-end h-full relative group">
+                                            <div className="w-full h-full absolute bottom-0 left-0 bg-slate-50 rounded-t-lg shadow-inner" style={{ height: `${forecastHeights[idx]}%` }} />
+                                            <div className="w-full absolute bottom-0 left-0 bg-[#8dbdff] rounded-t-lg transition-all group-hover:bg-[#7bacfb]" style={{ height: `${actualHeights[idx]}%` }} />
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="w-full flex justify-between mt-4 px-2 sm:px-6">
+                                    {days.map((day, idx) => (
+                                        <span key={idx} className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">{day}</span>
+                                    ))}
+                                </div>
+                            </Card>
+
+                            {/* Category Breakdown */}
+                            <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 sm:p-8 flex flex-col items-center justify-between">
+                                <div className="w-full">
+                                    <h2 className="text-[15px] font-bold text-slate-800 mb-1">Category Breakdown</h2>
+                                    <p className="text-xs text-slate-400 font-medium">Where your funds go</p>
+                                </div>
+
+                                <div className="relative w-48 h-48 my-8 shrink-0 flex items-center justify-center">
+                                    {/* Simulated Donut Chart using CSS Borders */}
+                                    <div className="absolute inset-0 rounded-full border-24 border-slate-100" />
+                                    <div className="absolute inset-0 rounded-full border-24 border-blue-400 border-t-blue-400 border-r-blue-400 border-b-transparent border-l-transparent -rotate-12" />
+                                    <div className="absolute inset-0 rounded-full border-24 border-emerald-400 border-t-transparent border-r-emerald-400 border-b-emerald-400 border-l-transparent rotate-70" />
+                                    <div className="absolute inset-0 rounded-full border-24 border-rose-400 border-t-transparent border-r-transparent border-b-rose-400 border-l-rose-400 -rotate-45" />
+
+                                    <div className="text-center bg-white w-32 h-32 rounded-full absolute flex flex-col items-center justify-center shadow-xs">
+                                        <span className="text-2xl font-bold text-slate-800">$3.4k</span>
+                                        <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Total</span>
+                                    </div>
+                                </div>
+
+                                <div className="w-full grid grid-cols-2 gap-y-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-blue-400" />
+                                        <div>
+                                            <div className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Housing</div>
+                                            <div className="text-sm font-bold text-slate-800">45%</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                                        <div>
+                                            <div className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Groceries</div>
+                                            <div className="text-sm font-bold text-slate-800">22%</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-rose-400" />
+                                        <div>
+                                            <div className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Leisure</div>
+                                            <div className="text-sm font-bold text-slate-800">18%</div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-slate-200" />
+                                        <div>
+                                            <div className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Others</div>
+                                            <div className="text-sm font-bold text-slate-800">15%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Card>
                         </div>
+                    </div> {/* End Left Column */}
 
-                        <div className="w-full grid grid-cols-2 gap-y-4">
-                            <div className="flex items-center gap-3">
-                                <div className="w-2.5 h-2.5 rounded-full bg-blue-400" />
+                    {/* Right Column: Leaderboard Section */}
+                    <div className="xl:col-start-2 xl:row-start-1">
+                        <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 sm:p-8 h-full sticky top-8">
+                            <div className="flex items-center justify-between mb-6">
                                 <div>
-                                    <div className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Housing</div>
-                                    <div className="text-sm font-bold text-slate-800">45%</div>
+                                    <h2 className="text-[15px] font-bold text-slate-800 mb-1">Top Spenders Leaderboard</h2>
+                                    <p className="text-xs text-slate-400 font-medium">See how your spending compares to others</p>
+                                </div>
+                                <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center shrink-0">
+                                    <Trophy className="w-5 h-5 text-amber-500" />
                                 </div>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                                <div>
-                                    <div className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Groceries</div>
-                                    <div className="text-sm font-bold text-slate-800">22%</div>
+
+                            {loadingLeaderboard ? (
+                                <div className="flex flex-col items-center justify-center py-10">
+                                    <Loader2 className="w-8 h-8 animate-spin text-indigo-600 mb-4" />
+                                    <p className="text-sm text-slate-500 font-medium">Loading rankings...</p>
                                 </div>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="w-2.5 h-2.5 rounded-full bg-rose-400" />
-                                <div>
-                                    <div className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Leisure</div>
-                                    <div className="text-sm font-bold text-slate-800">18%</div>
+                            ) : (
+                                <div className="space-y-3">
+                                    {leaderboard.map((user, idx) => (
+                                        <div key={idx} className={cn(
+                                            "flex items-center justify-between p-3 rounded-xl transition-colors hover:bg-slate-50"
+                                        )}>
+                                            <div className="flex items-center gap-4">
+                                                <div className={cn(
+                                                    "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0",
+                                                    user.rank === 1 ? "bg-amber-100 text-amber-700" :
+                                                        user.rank === 2 ? "bg-slate-200 text-slate-700" :
+                                                            user.rank === 3 ? "bg-orange-100 text-orange-700" :
+                                                                "bg-slate-100 text-slate-500"
+                                                )}>
+                                                    #{user.rank}
+                                                </div>
+                                                <div className="flex flex-col truncate w-24 sm:w-40 md:w-32 lg:w-40 xl:w-28">
+                                                    <span className="text-sm font-bold text-slate-800 truncate" title={user.email}>
+                                                        {user.email.split('@')[0]}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="text-sm font-bold text-slate-800 shrink-0">
+                                                ${user.totalSpent.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    {currentUser && (
+                                        <div className="flex items-center justify-between p-3 rounded-xl transition-colors bg-indigo-50 border border-indigo-100 border-dashed mt-4 pt-4 relative">
+                                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-2">
+                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Your Position</span>
+                                            </div>
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-indigo-100 text-indigo-700 shrink-0">
+                                                    #{currentUser.rank || '-'}
+                                                </div>
+                                                <div className="flex flex-col truncate">
+                                                    <span className="text-sm font-bold text-indigo-700 flex items-center gap-2">
+                                                        You <span className="text-[10px] bg-indigo-200 text-indigo-700 px-2 py-0.5 rounded-full">Current User</span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="text-sm font-bold text-indigo-700 shrink-0">
+                                                ${currentUser.totalSpent.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <div className="w-2.5 h-2.5 rounded-full bg-slate-200" />
-                                <div>
-                                    <div className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">Others</div>
-                                    <div className="text-sm font-bold text-slate-800">15%</div>
-                                </div>
-                            </div>
-                        </div>
-                    </Card>
-                </div>
+                            )}
+                        </Card>
+                    </div>
+                </div> {/* End Grid */}
 
                 {/* Bottom Row Predictive */}
                 <Card className="border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 sm:p-10 relative overflow-hidden bg-linear-to-r from-white to-blue-50/30">
