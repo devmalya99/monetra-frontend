@@ -100,6 +100,12 @@ This document outlines the step-by-step workflow and planning for the Monetra fr
   - [x] Replaced dialog with a full-page design using simple DOM elements (`div`), preserving high-fidelity aesthetic quality.
   - [x] Updated App Header to link to the new route `/premium-membership` instead of triggering a modal.
 
+### Step 6.8: Global User State & Identity Management
+  - [x] Overhauled `user-store.ts` using Zustand to capture extended user models alongside a full nested `membership` state representation.
+  - [x] Created `UserDataFetcher` pure component injected at `(app)/layout.tsx` specifically responsible for hydrating identity state without polluting component markup.
+  - [x] App header dropdown created using custom robust Ref-handling tying seamlessly into native Logout hooks and dynamic profile avatars.
+  - [x] Connected `/settings` inputs directly to the verified Zustand context to replace mocked John Doe variables.
+
 ### Phase 3: Polish & Optimization
 - [ ] **Step 7**: SEO Optimization
   - Meta tags

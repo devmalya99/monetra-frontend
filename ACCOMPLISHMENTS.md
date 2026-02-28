@@ -29,10 +29,11 @@ The frontend is built with a **Design System-first mindset**, not just "hacking 
     -   Provided real-time feedback and server-side error integration.
     -   Seamlessly integrated with Axios for backend communication.
 -   **Secure Authentication Architecture**:
-    -   **Zustand Store**: Centralized global user state management.
-    -   **Client Hydration**: Implemented `AuthProvider` pattern to sync client state with HttpOnly cookies via `/user/me`.
+    -   **Global Zustand State**: Replaced redundant API fetches across the dashboard with a singular, type-safe robust `user-store` to lock the User and Membership states efficiently into memory.
+    -   **Hydration via Pure Component**: Constructed a strictly headless logic layer (`<UserDataFetcher />`) injected directly into the core layout, achieving a pure separation of concerns for fetching `/premium/user-data` post-login.
+    -   **Dynamic Interfaces**: Updated app headers and deeply nested elements (like the Settings module) to read deterministically from the Zustand cache, dynamically adjusting user profiles, initials fallbacks, and premium access tokens.
+    -   **Custom Dropdown Control**: Embedded custom React `useRef` hooks triggering custom secure Logout logic and clearing system cache synchronously.
     -   **Middleware Protection**: Leveraged Next.js Middleware (`middleware.ts`) for server-side route guarding.
-    -   **Secure Logout**: Implemented backend-driven logout flow to securely invalidate sessions.
 
 ---
 
