@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Cashfree</title>
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+</head>
+<body>
+    <button id="btn">Click me</button>
+    <script>
+        document.getElementById('btn').addEventListener('click', () => {
+             const cashfree = Cashfree({
+                mode: "sandbox"
+            });
+            console.log(cashfree);
+             let checkoutOptions = {
+                paymentSessionId: "session_M2qS1w6u1U6oYVv_-82tS8y_8Gtzm2f5L-n-f9gTpH71gX55n5L-Q2tS1w6u1U6oYVv_-82tS8y_8Gtzm2f5L=", // Fake session just to see if SDK throws
+                redirectTarget: "_modal",
+            };
+            cashfree.checkout(checkoutOptions).then(result => {
+                console.log(result);
+            }).catch(console.error);
+        });
+    </script>
+</body>
+</html>

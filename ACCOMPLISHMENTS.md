@@ -50,6 +50,7 @@ We moved beyond simple pages to a fully structured application layout.
     -   **Granular Real-Time Stats**: Display cards with visual progress bars and category breakdown using elegant flex layouts.
 -   **Premium Settings Experience**: Completely revamped the `/settings` route using a high-fidelity 2-column layout, complete with an intuitive internal subset navigation, cleanly segmented preference cards (Profile, Plan limits, Dark Mode Toggles), and refined UI primitives.
 -   **Advanced Analytics UI**: Built an "Advanced Analytics" dashboard featuring predictive insight simulations, complex CSS-driven pseudo-charts (donut and bar charts), and an AI forecasting section designed to highlight premium features.
+    -   **Top Spenders Leaderboard**: Integrated a dynamic leaderboard displaying the top 10 spenders with formatted amounts, custom ranking badges (gold, silver, bronze), and highlighted the user's current standalone ranking contextually at the end.
 -   **Investments Portfolio View**: Created an enterprise-grade investments dashboard simulating holding metrics, market trends, and asset allocation data.
 
 ### **Expense Management API Integration**
@@ -62,6 +63,10 @@ We moved beyond simple pages to a fully structured application layout.
     -   Created dedicated `src/lib/api/expenses.ts` module.
     -   Implemented strict TypeScript interfaces (`ApiResponse`, `ExpensesData`) to mirror backend contracts.
     -   Ensured automatic UI refresh via callback patterns after modifications.
+
+### **Premium Features & Memberships**
+-   **Dynamic Premium Plans**: Refactored the `PremiumFeatureDialog` to fetch live subscription tiers via `GET /premium/memberships` instead of static hardcoding, featuring loading states, detailed feature comparisons, and mapped server data seamlessly integrating with the UI.
+-   **Cashfree Payment Integration**: Integrated `cashfree-pg` for seamless payment initiation. When users verify an order via `POST /premium/verify-order`, the backend instantiates generating `payment_session_id`. Included a robust Webhook at `/premium/webhook` for secure signature verification and lifecycle completion.
 
 ---
 
