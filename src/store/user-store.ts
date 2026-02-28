@@ -1,22 +1,50 @@
-
 import { create } from 'zustand';
 
-interface User {
-    id: string; // Or number
+export interface User {
+    id: string;
     email: string;
-    // Add other fields from your user model
+    fullName: string | null;
+    phoneNumber: string | null;
+    isVerified: boolean;
+    mfaEnabled: boolean;
+    lastLoginAt: string | null;
+    role: string;
+    city: string | null;
+    countryCode: string | null;
+    currencyCode: string;
+    timezone: string | null;
+    profileImgUrl: string | null;
+    bio: string | null;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface Membership {
+    id: string;
+    tier: string;
+    price: string;
+    tenure: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 interface UserState {
     user: User | null;
+    membership: Membership | null;
     isAuthenticated: boolean;
     setUser: (user: User) => void;
+    setMembership: (membership: Membership | null) => void;
+    setUserData: (user: User, membership: Membership | null) => void;
     clearUser: () => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
-    user: null, // Initial state, will be hydrated on client mount
+    user: null,
+    membership: null,
     isAuthenticated: false,
     setUser: (user) => set({ user, isAuthenticated: true }),
-    clearUser: () => set({ user: null, isAuthenticated: false }),
+    setMembership: (membership) => set({ membership }),
+    setUserData: (user, membership) => set({ user, membership, isAuthenticated: true }),
+    clearUser: () => set({ user: null, membership: null, isAuthenticated: false }),
 }));

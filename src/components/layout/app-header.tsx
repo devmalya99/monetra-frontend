@@ -1,10 +1,13 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { ShieldCheck, Bell, Search, Star } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { ShieldCheck, Bell, Search, Star, Crown, LogOut, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import axiosInstance from '@/lib/axios';
+import { useUserStore } from '@/store/user-store';
 
 const routes = [
     { label: 'Dashboard', href: '/dashboard' },
@@ -15,6 +18,30 @@ const routes = [
 
 export function AppHeader() {
     const pathname = usePathname();
+    const router = useRouter();
+    const { user, membership, clearUser } = useUserStore();
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setDropdownOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [dropdownRef]);
+
+    const handleLogout = async () => {
+        try {
+            await axiosInstance.post('/user/logout');
+            clearUser();
+            router.push('/signin');
+        } catch (error) {
+            console.error("Logout failed", error);
+        }
+    };
 
     return (
         <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm">
@@ -59,23 +86,64 @@ export function AppHeader() {
                         />
                     </div>
 
-                    <Link href="/premium-membership" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-indigo-100 bg-indigo-50/50 text-indigo-600 text-xs font-bold cursor-pointer hover:bg-indigo-50 transition-colors">
-                        <div className="w-3.5 h-3.5 rounded-full bg-indigo-600 flex items-center justify-center text-white">
-                            <Star className="w-2.5 h-2.5 fill-white" />
+                    {membership ? (
+                        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-amber-200 bg-amber-50 text-amber-600 text-xs font-bold">
+                            <div className="w-3.5 h-3.5 rounded-full bg-amber-500 flex items-center justify-center text-white">
+                                <Crown className="w-2.5 h-2.5 text-white" />
+                            </div>
+                            {membership.tier.charAt(0).toUpperCase() + membership.tier.slice(1)}
                         </div>
-                        Premium
-                    </Link>
+                    ) : (
+                        <Link href="/premium-membership" className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-indigo-100 bg-indigo-50/50 text-indigo-600 text-xs font-bold cursor-pointer hover:bg-indigo-50 transition-colors">
+                            <div className="w-3.5 h-3.5 rounded-full bg-indigo-600 flex items-center justify-center text-white">
+                                <Star className="w-2.5 h-2.5 fill-white" />
+                            </div>
+                            Premium
+                        </Link>
+                    )}
 
                     <button className="text-slate-400 hover:text-slate-600 transition-colors p-2 relative">
                         <Bell className="w-5 h-5" />
                         <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
                     </button>
 
-                    <div className="flex items-center gap-3 cursor-pointer pl-2 border-l border-slate-100">
-                        <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-orange-100 bg-orange-50 flex items-center justify-center">
-                            <img src="https://i.pravatar.cc/150?u=johndoe" alt="John Doe" className="w-full h-full object-cover" />
+                    <div className="relative" ref={dropdownRef}>
+                        <div
+                            className="flex items-center gap-3 cursor-pointer pl-2 border-l border-slate-100 hover:opacity-80 transition-opacity"
+                            onClick={() => setDropdownOpen(!dropdownOpen)}
+                        >
+                            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-indigo-100 bg-indigo-50 flex items-center justify-center">
+                                {user?.profileImgUrl ? (
+                                    <img src={user.profileImgUrl} alt={user.fullName || "User"} className="w-full h-full object-cover" />
+                                ) : (
+                                    <span className="text-sm font-bold text-indigo-500">
+                                        {user?.fullName ? user.fullName.charAt(0).toUpperCase() : (user?.email ? user.email.charAt(0).toUpperCase() : "U")}
+                                    </span>
+                                )}
+                            </div>
+                            <span className="text-sm font-bold text-slate-800 hidden sm:block">
+                                {user?.fullName || (user?.email && user.email.substring(0, 4)) || "User"}
+                            </span>
+                            <ChevronDown className="w-4 h-4 text-slate-400 hidden sm:block" />
                         </div>
-                        <span className="text-sm font-bold text-slate-800 hidden sm:block">John Doe</span>
+
+                        {/* Dropdown Menu */}
+                        {dropdownOpen && (
+                            <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden z-50 transform origin-top-right transition-all">
+                                <div className="p-2">
+                                    <div className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+                                        Account
+                                    </div>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full text-left px-3 py-2 flex items-center gap-2 text-sm font-semibold text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                                    >
+                                        <LogOut className="w-4 h-4" />
+                                        Sign out
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

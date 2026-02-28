@@ -5,10 +5,14 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { User, Shield, Bell, Award, Zap, Check, ChevronDown, UserCircle } from 'lucide-react';
+import { User, Shield, Bell, Award, Zap, Check, ChevronDown, UserCircle, Crown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useUserStore } from '@/store/user-store';
+import Link from 'next/link';
 
 export default function SettingsPage() {
+    const { user, membership } = useUserStore();
+
     useEffect(() => {
         console.log('🌟 [STEP: UI Update] -> Loaded Beautiful Premium Settings Design!');
     }, []);
@@ -69,15 +73,17 @@ export default function SettingsPage() {
                                 <div className="space-y-2">
                                     <Label className="text-sm font-bold text-slate-700">Full Name</Label>
                                     <Input
-                                        defaultValue="John Doe"
+                                        defaultValue={user?.fullName || ""}
+                                        placeholder="Enter your full name"
                                         className="bg-white border-slate-200 focus-visible:ring-emerald-500 text-sm font-medium h-11 rounded-lg"
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="text-sm font-bold text-slate-700">Email Address</Label>
                                     <Input
-                                        defaultValue="john.doe@example.com"
-                                        className="bg-white border-slate-200 focus-visible:ring-emerald-500 text-sm font-medium h-11 rounded-lg"
+                                        defaultValue={user?.email || ""}
+                                        disabled
+                                        className="bg-slate-50 border-slate-200 text-slate-500 focus-visible:ring-emerald-500 text-sm font-medium h-11 rounded-lg"
                                     />
                                 </div>
 
@@ -116,45 +122,60 @@ export default function SettingsPage() {
                         <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl p-6 sm:p-8">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-slate-100">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center">
-                                        <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white relative">
-                                            <Award className="w-5 h-5" />
+                                    <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center", membership ? "bg-amber-50" : "bg-indigo-50")}>
+                                        <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-white relative", membership ? "bg-amber-500" : "bg-indigo-500")}>
+                                            {membership ? <Crown className="w-5 h-5 text-white" /> : <Award className="w-5 h-5 text-white" />}
                                         </div>
                                     </div>
                                     <div>
                                         <div className="flex items-center gap-3 mb-1">
-                                            <h3 className="text-xl font-bold text-slate-800">Current Plan: Free</h3>
-                                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-500 uppercase tracking-wider">Default</span>
+                                            <h3 className="text-xl font-bold text-slate-800">
+                                                Current Plan: {membership ? membership.tier.charAt(0).toUpperCase() + membership.tier.slice(1) : 'Free'}
+                                            </h3>
+                                            <span className={cn(
+                                                "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider",
+                                                membership ? "bg-amber-100 text-amber-600" : "bg-slate-100 text-slate-500"
+                                            )}>
+                                                {membership ? "Active" : "Default"}
+                                            </span>
                                         </div>
-                                        <p className="text-sm text-slate-500 font-medium">You are currently using the limited free version of Monetra.</p>
+                                        <p className="text-sm text-slate-500 font-medium">
+                                            {membership ? `Thank you for being a premium member. Valid for ${membership.tenure}.` : "You are currently using the limited free version of Monetra."}
+                                        </p>
                                     </div>
                                 </div>
-                                <Button className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold border-0 shadow-none h-11 px-6 rounded-lg whitespace-nowrap transition-colors">
-                                    <Zap className="w-4 h-4 mr-2 fill-indigo-600" />
-                                    Upgrade to Premium
-                                </Button>
+                                {!membership && (
+                                    <Link href="/premium-membership">
+                                        <Button className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold border-0 shadow-none h-11 px-6 rounded-lg whitespace-nowrap transition-colors">
+                                            <Zap className="w-4 h-4 mr-2 fill-indigo-600" />
+                                            Upgrade to Premium
+                                        </Button>
+                                    </Link>
+                                )}
                             </div>
 
                             <div className="pt-6">
-                                <h4 className="text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-4">Premium Benefits</h4>
+                                <h4 className="text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-4">
+                                    {membership ? "Your plan includes" : "Premium Benefits"}
+                                </h4>
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     <div className="flex items-center gap-2">
                                         <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
                                             <Check className="w-3 h-3 text-emerald-600 stroke-3" />
                                         </div>
-                                        <span className="text-sm font-medium text-slate-600">AI Spending Insights</span>
+                                        <span className="text-sm font-medium text-slate-600">Smart Budgeting & Analytics</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
                                             <Check className="w-3 h-3 text-emerald-600 stroke-3" />
                                         </div>
-                                        <span className="text-sm font-medium text-slate-600">Unlimited Accounts</span>
+                                        <span className="text-sm font-medium text-slate-600">Priority Financial Metrics</span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <div className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
                                             <Check className="w-3 h-3 text-emerald-600 stroke-3" />
                                         </div>
-                                        <span className="text-sm font-medium text-slate-600">Export Custom Reports</span>
+                                        <span className="text-sm font-medium text-slate-600">Advanced Portfolios</span>
                                     </div>
                                 </div>
                             </div>
