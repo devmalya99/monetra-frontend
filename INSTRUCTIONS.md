@@ -90,10 +90,15 @@ This document outlines the step-by-step workflow and planning for the Monetra fr
   - [x] Integrate Premium membership fetching `/premium/memberships` into `PremiumFeatureDialog`.
   - [x] Configure detailed feature comparison matrices inside the modal natively handling async data.
   - [x] Trigger `/premium/verify-order` upon plan selection, updating UX with loading states and comprehensive success/error logging.
-  - [x] Integrate **Cashfree Payment Gateway** logic. Hit backend `/premium/verify-order` returning `payment_session_id`. Webhook signature verification established at `/premium/webhook`.
+  - [x] Integrate **Razorpay Payment Gateway** logic. Hit backend `/premium/verify-order` returning `razorpay_order_data`. Webhook signature verification established at `/premium/webhook`.
 
 ### Step 6.6: Analytics Enhancements
   - [x] Integrate **Top Spenders Leaderboard** in `/analytics`, showcasing rank, mock user data, amount, and an isolated rank for the current authenticated user at the bottom.
+
+### Step 6.7: Premium Membership Page
+  - [x] Moved `PremiumFeatureDialog` logic to a dedicated page `/premium-membership`.
+  - [x] Replaced dialog with a full-page design using simple DOM elements (`div`), preserving high-fidelity aesthetic quality.
+  - [x] Updated App Header to link to the new route `/premium-membership` instead of triggering a modal.
 
 ### Phase 3: Polish & Optimization
 - [ ] **Step 7**: SEO Optimization

@@ -49,9 +49,9 @@ export default function SignUpPage() {
     async function onSubmit(data: SignupFormValues) {
         setIsLoading(true);
         setError(null);
-        
+
         console.log('🚀 Step 1: Initiating Signup Process...');
-        
+
         try {
             const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
             if (!backendUrl) {
@@ -59,14 +59,14 @@ export default function SignUpPage() {
             }
 
             console.log(`📡 Step 2: Sending request to ${backendUrl}/user/signup...`);
-            
+
             const response = await axios.post(`${backendUrl}/user/signup`, {
                 email: data.email,
                 password: data.password
             });
 
             console.log('✅ Step 3: Signup successful!', response.data);
-            
+
             // Redirect to signin page on success
             router.push('/signin');
         } catch (err: any) {
