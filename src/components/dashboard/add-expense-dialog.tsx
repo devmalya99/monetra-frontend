@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Plus, Loader2 } from 'lucide-react';
 import { expensesApi } from '@/lib/api/expenses';
+import { customToast } from '@/lib/toast';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -83,13 +84,15 @@ export function AddExpenseDialog({ onExpenseAdded }: AddExpenseDialogProps) {
 
             setOpen(false);
             reset();
+            customToast.success("Expense added successfully!");
             if (onExpenseAdded) {
                 onExpenseAdded();
             }
-            console.log('Expense added successfully');
         } catch (err: any) {
             console.error('Failed to add expense:', err);
-            setError(err.response?.data?.message || 'Failed to add expense. Please try again.');
+            const errorMessage = err.response?.data?.message || 'Failed to add expense. Please try again.';
+            setError(errorMessage);
+            customToast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }

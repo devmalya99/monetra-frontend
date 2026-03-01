@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import axiosInstance from '@/lib/axios';
 import { useUserStore } from '@/store/user-store';
+import { customToast } from '@/lib/toast';
 
 const routes = [
     { label: 'Dashboard', href: '/dashboard' },
@@ -37,9 +38,11 @@ export function AppHeader() {
         try {
             await axiosInstance.post('/user/logout');
             clearUser();
+            customToast.success("You have been signed out");
             router.push('/signin');
         } catch (error) {
             console.error("Logout failed", error);
+            customToast.error("Failed to sign out properly");
         }
     };
 
