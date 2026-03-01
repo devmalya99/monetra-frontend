@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
-import { Loader2, Trash2 } from "lucide-react";
+import { Loader2, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { format } from 'date-fns';
 import { type Expense, expensesApi } from '@/lib/api/expenses';
 import { cn } from '@/lib/utils';
@@ -17,6 +17,8 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
+const EXPENSES_PER_PAGE = 5;
+
 interface RecentTransactionsProps {
     expenses: Expense[];
     loading: boolean;
@@ -27,6 +29,18 @@ interface RecentTransactionsProps {
 export function RecentTransactions({ expenses, loading, error, onExpenseModified }: RecentTransactionsProps) {
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [confirmDeleteExpense, setConfirmDeleteExpense] = useState<Expense | null>(null);
+    const [page, setPage] = useState(1);
+
+    const totalPages = Math.max(1, Math.ceil(expenses.length / EXPENSES_PER_PAGE));
+    const start = (page - 1) * EXPENSES_PER_PAGE;
+    const paginatedExpenses = expenses.slice(start, start + EXPENSES_PER_PAGE);
+
+    // Reset to page 1 when list shrinks (e.g. after delete) and current page would be empty
+    useEffect(() => {
+        if (expenses.length > 0 && start >= expenses.length) {
+            setPage(Math.max(1, totalPages));
+        }
+    }, [expenses.length, start, totalPages]);
 
     const executeDelete = async () => {
         if (!confirmDeleteExpense) return;
@@ -61,9 +75,6 @@ export function RecentTransactions({ expenses, loading, error, onExpenseModified
         <div className="space-y-4">
             <div className="flex items-center justify-between px-1">
                 <h2 className="text-xl font-bold text-slate-800">Recent Transactions</h2>
-                <button className="text-sm font-semibold text-emerald-500 hover:text-emerald-600 transition-colors">
-                    View All
-                </button>
             </div>
 
             <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl overflow-hidden min-h-[400px]">
@@ -76,8 +87,9 @@ export function RecentTransactions({ expenses, loading, error, onExpenseModified
                 ) : expenses.length === 0 ? (
                     <div className="text-slate-400 text-center p-12 text-sm font-medium">No expenses recorded yet.</div>
                 ) : (
+                    <>
                     <div className="divide-y divide-slate-50">
-                        {expenses.slice(0, 5).map((expense) => {
+                        {paginatedExpenses.map((expense) => {
                             const isIncome = expense.title.toLowerCase().includes('salary') || expense.title.toLowerCase().includes('deposit');
                             const displayAmount = parseFloat(expense.amount);
 
@@ -124,6 +136,39 @@ export function RecentTransactions({ expenses, loading, error, onExpenseModified
                             );
                         })}
                     </div>
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/50">
+                            <span className="text-sm text-slate-500">
+                                Page {page} of {totalPages}
+                                <span className="ml-2 text-slate-400">
+                                    ({start + 1}–{Math.min(start + EXPENSES_PER_PAGE, expenses.length)} of {expenses.length})
+                                </span>
+                            </span>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                                    disabled={page <= 1}
+                                    className="border-slate-200 text-slate-700 hover:bg-slate-100"
+                                >
+                                    <ChevronLeft className="h-4 w-4 mr-0.5" />
+                                    Previous
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                                    disabled={page >= totalPages}
+                                    className="border-slate-200 text-slate-700 hover:bg-slate-100"
+                                >
+                                    Next
+                                    <ChevronRight className="h-4 w-4 ml-0.5" />
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                    </>
                 )}
             </Card>
 
