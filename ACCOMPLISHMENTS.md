@@ -34,6 +34,7 @@ The frontend is built with a **Design System-first mindset**, not just "hacking 
     -   **Dynamic Interfaces**: Updated app headers and deeply nested elements (like the Settings module) to read deterministically from the Zustand cache, dynamically adjusting user profiles, initials fallbacks, and premium access tokens.
     -   **Custom Dropdown Control**: Embedded custom React `useRef` hooks triggering custom secure Logout logic and clearing system cache synchronously.
     -   **Middleware Protection**: Leveraged Next.js Middleware (`middleware.ts`) for server-side route guarding.
+    -   **Dynamic Credential Recovery**: Built a secure dual-phase forgot password workflow. Links in emails trigger a backend `GET /user/reset-password/:id` verification (providing instant validation or "Link Expired" feedback) which redirects to a specialized Next.js dynamic route (`/reset-password/[id]`). The final credential update is secured via a protected `POST /user/reset-password/:id` submission with Zod-backed payload validation.
 
 ---
 
@@ -118,20 +119,11 @@ Demonstrating an ability to write maintainable, scalable code.
 
 ---
 
-## 7. Backend Integration (FastAPI)
-We expanded beyond the frontend to build a robust full-stack foundation.
-
--   **High-Performance API**: Integrated **Python FastAPI** for the backend, chosen for its speed (Starlette) and modern features.
--   **Type Safety Everywhere**: Extended type safety to the backend using **Pydantic** models, ensuring data consistency across the stack.
--   **Live Development Environment**: Configured `uvicorn` with hot-reload (`--reload`) for a seamless rigorous development cycle.
--   **API Documentation**: Automatic interactive documentation via **Swagger UI** (`/docs`) for easy endpoint testing.
-
----
-
-## 📈 Future Version Features
+## 🏗 7. Future Version Features
 This section details the actual product features planned for future production versions.
 
 -   **Bank Plaid API Integration**: Add automatic transaction syncing directly from users' bank accounts.
+-   **AI Category Suggestions**: Integrate Gemini/AI to automatically categorize expenses based on titles.
 -   **AI Chat Assistant**: Let users talk to an AI bot to ask "How much did I spend on food this month?"
 -   **Live Stock/Mutual Fund APIs**: Integrate live market data to replace the simulated investments dashboard.
 -   **Push Notifications Engine**: Add real-time alerts when users go over their monthly budget limits.

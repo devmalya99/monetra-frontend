@@ -13,10 +13,24 @@ This is the frontend application for the Monetra project, built with Next.js.
 - **Linting**: ESLint v9
 - **Modules**: ESM (`type: "module"`)
 
-- **Modules**: ESM (`type: "module"`)
+## Features
+- **Modern Authentication**: Secure Signup, Signin, and JWT-based session management.
+- **Robust Password Reset**:
+    - Dual-phase verification process (`GET` verification link with instant backend feedback).
+    - Intelligent link expiration checks (15-minute window).
+    - Zod-powered client-side password matching and strength validation.
+- **Investment & Expense Tracking**: Real-time financial dashboard with high-fidelity UI and dummy state fallbacks.
+- **Premium Membership**: Razorpay integration with secure order verification and plan-based access control.
+- **Advanced Analytics**: Interactive charts, spillage insights, and top-spender leaderboards.
+- **Type-Safe Development**: End-to-end TypeScript integration with shared validation schemas.
+- **Performance Optimized**: Next.js 16 with Turbopack and React 19 concurrent features.
+- **Responsive Design**: Mobile-first architecture with custom dark mode themes.
 
 ## 🏆 Project Accomplishments
 See [ACCOMPLISHMENTS.md](./ACCOMPLISHMENTS.md) for a detailed breakdown of the engineering decisions, architecture, and code quality practices implemented in this project. This file serves as a technical showcase.
+
+## Implementation Details
+For a step-by-step developer workflow, refer to [INSTRUCTIONS.md](./INSTRUCTIONS.md).
 
 ## Getting Started
 

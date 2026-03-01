@@ -58,6 +58,12 @@ This document outlines the step-by-step workflow and planning for the Monetra fr
     - Implemented `Header` component with conditional rendering
     - Added Logout functionality calling backend `/user/logout` endpoint
     - Removed forced authentication redirects to allow public access
+  - [x] **Step 5.4**: Forgot & Reset Password Functionality
+    - Implemented `forgot-password` module calling `/user/request-password-reset` endpoint.
+    - Extracted the visual workflow to a straightforward email triggering structure.
+    - Created dynamic `reset-password/[id]` page module routing triggered via backend `GET` link verification.
+    - Added Zod validators ensuring matching password payloads.
+    - Connected new password submission via `POST /user/reset-password/:id`.
 - [x] **Step 6**: Dashboard/Main App
   - [x] **Sidebar**: Created responsive sidebar with mobile support using `Sheet`.
   - [x] **Dashboard Layout**: Implemented `(app)` route group with dedicated layout.
