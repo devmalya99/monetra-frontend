@@ -78,6 +78,7 @@ export default function DashboardPage() {
                         expenses={expenses}
                         loading={loading}
                         error={error}
+                        onExpenseModified={fetchExpenses}
                     />
 
                     <MonthlySpending

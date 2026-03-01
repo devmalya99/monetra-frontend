@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/providers/theme-provider';
 import AuthProvider from '@/providers/auth-provider';
+import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 
@@ -41,7 +42,7 @@ export default function RootLayout({
       <head>
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
       </head>
-      
+
       <body className={`${inter.className} min-h-screen bg-background font-sans antialiased text-foreground`}>
         <ThemeProvider
           attribute="class"
@@ -51,6 +52,7 @@ export default function RootLayout({
         >
           <AuthProvider>
             {children}
+            <Toaster position="bottom-right" />
           </AuthProvider>
         </ThemeProvider>
       </body>

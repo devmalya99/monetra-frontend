@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import axios from 'axios';
 import { Loader2, ArrowRight, Lock, Mail } from 'lucide-react';
+import { customToast } from '@/lib/toast';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -79,12 +80,16 @@ export default function SignInPage() {
                 setUser(response.data);
             }
 
+            customToast.success("Welcome back!");
+
             // Redirect to dashboard on success
             // TODO: Update this route once the dashboard is ready
             router.push('/');
         } catch (err: any) {
             console.error('❌ Step 3: Signin failed:', err);
-            setError(err.response?.data?.message || "Invalid credentials. Please try again.");
+            const errorMessage = err.response?.data?.message || "Invalid credentials. Please try again.";
+            setError(errorMessage);
+            customToast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }

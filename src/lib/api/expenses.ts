@@ -13,7 +13,14 @@ export interface Expense {
 
 export interface AddExpensePayload {
     title: string;
-    amount: string;
+    amount: string | number;
+    category: string;
+    date: string;
+}
+
+export interface UpdateExpensePayload {
+    title: string;
+    amount: number;
     category: string;
     date: string;
 }
@@ -51,6 +58,10 @@ export const expensesApi = {
 
     add: async (payload: AddExpensePayload): Promise<void> => {
         await api.post('/user/add-expense', payload);
+    },
+
+    update: async (id: string, payload: UpdateExpensePayload): Promise<void> => {
+        await api.patch(`/user/update-expense/${id}`, payload);
     },
 
     updateBalance: async (payload: { amount: number }): Promise<void> => {

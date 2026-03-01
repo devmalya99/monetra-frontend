@@ -1,17 +1,49 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import { format } from 'date-fns';
-import { type Expense } from '@/lib/api/expenses';
+import { type Expense, expensesApi } from '@/lib/api/expenses';
 import { cn } from '@/lib/utils';
 import { getCategoryIcon, getCategoryColor } from "./top-balance-card";
+import { EditExpenseDialog } from "./edit-expense-dialog";
+import { customToast } from "@/lib/toast";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 interface RecentTransactionsProps {
     expenses: Expense[];
     loading: boolean;
     error: string | null;
+    onExpenseModified?: () => void;
 }
 
-export function RecentTransactions({ expenses, loading, error }: RecentTransactionsProps) {
+export function RecentTransactions({ expenses, loading, error, onExpenseModified }: RecentTransactionsProps) {
+    const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [confirmDeleteExpense, setConfirmDeleteExpense] = useState<Expense | null>(null);
+
+    const executeDelete = async () => {
+        if (!confirmDeleteExpense) return;
+        try {
+            setDeletingId(confirmDeleteExpense.id);
+            await expensesApi.delete(confirmDeleteExpense.id);
+            customToast.success("Expense deleted successfully");
+            if (onExpenseModified) onExpenseModified();
+        } catch (err) {
+            console.error("Failed to delete", err);
+            customToast.error("Failed to delete expense");
+        } finally {
+            setDeletingId(null);
+            setConfirmDeleteExpense(null);
+        }
+    };
+
     const formatINR = (value: number) => {
         return new Intl.NumberFormat('en-IN', {
             style: 'currency',
@@ -66,8 +98,27 @@ export function RecentTransactions({ expenses, loading, error }: RecentTransacti
                                             </div>
                                         </div>
                                     </div>
-                                    <div className={cn("font-bold text-[15px]", getAmountColor(displayAmount, isIncome))}>
-                                        {isIncome ? '+' : '-'}{formatINR(displayAmount)}
+                                    <div className="flex items-center gap-4">
+                                        <div className={cn("font-bold text-[15px]", getAmountColor(displayAmount, isIncome))}>
+                                            {isIncome ? '+' : '-'}{formatINR(displayAmount)}
+                                        </div>
+
+                                        {/* Action Buttons - Always visible for mobile accessibility */}
+                                        <div className="flex items-center gap-1">
+                                            <EditExpenseDialog
+                                                expense={expense}
+                                                onExpenseUpdated={onExpenseModified}
+                                                onExpenseDeleted={onExpenseModified}
+                                            />
+                                            <button
+                                                onClick={() => setConfirmDeleteExpense(expense)}
+                                                disabled={deletingId === expense.id}
+                                                className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                                                title="Delete Expense"
+                                            >
+                                                {deletingId === expense.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             );
@@ -75,6 +126,43 @@ export function RecentTransactions({ expenses, loading, error }: RecentTransacti
                     </div>
                 )}
             </Card>
+
+            <Dialog open={!!confirmDeleteExpense} onOpenChange={() => setConfirmDeleteExpense(null)}>
+                <DialogContent className="sm:max-w-[425px] bg-gray-900 border-gray-800 text-white z-100">
+                    <DialogHeader>
+                        <DialogTitle className="text-white">Confirm Deletion</DialogTitle>
+                        <DialogDescription className="text-gray-400">
+                            Are you absolutely sure you want to delete this expense? This action cannot be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    {confirmDeleteExpense && (
+                        <div className="bg-red-500/10 text-red-500 text-sm p-3 rounded-md border border-red-500/20 mb-4">
+                            This will permanently remove <strong>{confirmDeleteExpense.title}</strong> from your records.
+                        </div>
+                    )}
+                    <DialogFooter className="flex items-center sm:justify-end gap-3">
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => setConfirmDeleteExpense(null)}
+                            disabled={!!deletingId}
+                            className="text-gray-400 hover:text-white"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            onClick={executeDelete}
+                            disabled={!!deletingId}
+                            className="bg-red-600 hover:bg-red-700 text-white"
+                        >
+                            {deletingId ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash2 className="mr-2 h-4 w-4" />}
+                            Yes, Delete
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
