@@ -60,10 +60,16 @@ We moved beyond simple pages to a fully structured application layout.
 -   **Secure CRUD Operations**:
     -   **Create**: Implemented `AddExpenseDialog` with Zod validation and string-safe payload handling.
     -   **Delete**: Added instant expense removal with confirmation dialogs.
+-   **Paginated Transactions List**: Implemented client-side pagination for the Recent Transactions list on the dashboard, displaying **5 expenses per page** with Previous/Next controls, page indicator (e.g. "Page 1 of 3"), and item range (e.g. "1–5 of 14"). Added automatic page reset when the list shrinks (e.g. after delete) to avoid landing on an empty page.
 -   **Optimized Data Flow**:
     -   Created dedicated `src/lib/api/expenses.ts` module.
     -   Implemented strict TypeScript interfaces (`ApiResponse`, `ExpensesData`) to mirror backend contracts.
     -   Ensured automatic UI refresh via callback patterns after modifications.
+
+### **Premium Expense & Income Report**
+-   **Report Access (Premium-Only)**: Added two dashboard actions for premium users: **View Report** (opens a Shadcn Dialog) and **Download PDF** (one-click monthly report download). Buttons are hidden for non-premium users; if the report modal is opened by a non-premium user, an upgrade CTA with link to `/premium-membership` is shown.
+-   **Multi-View Report**: Report displays all expenses and incomes in a table (Date, Description, Category, Income, Expense). Income is derived from transaction titles (e.g. salary, deposit). Users can switch between **Daily**, **Weekly**, and **Monthly** views with clear group labels and subtotals per period.
+-   **PDF Export**: Implemented PDF generation using **jspdf** and **jspdf-autotable**: formatted report with teal styling, group subtotals, grand totals (Total Income, Total Expense, Savings), and generation timestamp. Export respects the currently selected view in the modal; dashboard "Download PDF" uses monthly view by default. Report logic lives in `src/lib/report-utils.ts`, PDF generation in `src/lib/pdf-report.ts`.
 
 ### **Premium Features & Memberships**
 -   **Dynamic Premium Plans**: Refactored the `PremiumFeatureDialog` to fetch live subscription tiers via `GET /premium/memberships` instead of static hardcoding, featuring loading states, detailed feature comparisons, and mapped server data seamlessly integrating with the UI.
