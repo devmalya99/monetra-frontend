@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus, Loader2, Wand2 } from 'lucide-react';
 import { expensesApi } from '@/lib/api/expenses';
 import { customToast } from '@/lib/toast';
 
@@ -33,18 +33,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-const CATEGORIES = [
-    'Food',
-    'Transport',
-    'Housing',
-    'Utilities',
-    'Entertainment',
-    'Healthcare',
-    'Shopping',
-    'Personal',
-    'Education',
-    'Other',
-];
+
 
 interface AddExpenseDialogProps {
     onExpenseAdded?: () => void;
@@ -53,12 +42,15 @@ interface AddExpenseDialogProps {
 export function AddExpenseDialog({ onExpenseAdded }: AddExpenseDialogProps) {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isSuggestingCategory, setIsSuggestingCategory] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const {
         register,
         handleSubmit,
         reset,
+        getValues,
+        setValue,
         formState: { errors },
     } = useForm<FormValues>({
         resolver: zodResolver(formSchema) as any,
@@ -95,6 +87,29 @@ export function AddExpenseDialog({ onExpenseAdded }: AddExpenseDialogProps) {
             customToast.error(errorMessage);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleSuggestCategory = async () => {
+        const title = getValues('title');
+        if (!title || title.length < 3) {
+            customToast.error('Please enter a valid title first');
+            return;
+        }
+
+        setIsSuggestingCategory(true);
+        try {
+            const category = await expensesApi.suggestCategory(title);
+            if (category) {
+                setValue('category', category, { shouldValidate: true });
+                customToast.success(`Category set to "${category}"`);
+            } else {
+                customToast.error('No category suggestion received');
+            }
+        } catch (error) {
+            customToast.error('Failed to get an AI category suggestion');
+        } finally {
+            setIsSuggestingCategory(false);
         }
     };
 
@@ -164,18 +179,23 @@ export function AddExpenseDialog({ onExpenseAdded }: AddExpenseDialogProps) {
                             Category
                         </Label>
                         <div className="col-span-3">
-                            <select
-                                id="category"
-                                className="flex h-10 w-full items-center justify-between rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1"
-                                {...register('category')}
-                            >
-                                <option value="" disabled>Select a category</option>
-                                {CATEGORIES.map((cat) => (
-                                    <option key={cat} value={cat}>
-                                        {cat}
-                                    </option>
-                                ))}
-                            </select>
+                            <div className="flex gap-2">
+                                <Input
+                                    id="category"
+                                    placeholder="E.g., Food, Transport"
+                                    className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus-visible:ring-emerald-500"
+                                    {...register('category')}
+                                />
+                                <Button
+                                    type="button"
+                                    onClick={handleSuggestCategory}
+                                    disabled={isSuggestingCategory}
+                                    className="h-10 bg-indigo-500/10 text-indigo-400 font-bold border border-indigo-500/20 shadow-none hover:bg-indigo-500/20 hover:text-indigo-300 transition-colors"
+                                    title="Suggest category with AI"
+                                >
+                                    {isSuggestingCategory ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
+                                </Button>
+                            </div>
                             {errors.category && (
                                 <p className="text-xs text-red-400 mt-1">{errors.category.message}</p>
                             )}
