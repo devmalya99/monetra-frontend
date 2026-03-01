@@ -60,6 +60,16 @@ export const expensesApi = {
         await api.post('/user/add-expense', payload);
     },
 
+    suggestCategory: async (title: string): Promise<string> => {
+        try {
+            const response = await api.post('/user/suggest-category', { title });
+            return response.data?.data?.category || '';
+        } catch (error) {
+            console.warn('Failed to suggest category:', error);
+            throw error;
+        }
+    },
+
     update: async (id: string, payload: UpdateExpensePayload): Promise<void> => {
         await api.patch(`/user/update-expense/${id}`, payload);
     },
