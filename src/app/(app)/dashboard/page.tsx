@@ -7,8 +7,17 @@ import { AddBalanceDialog } from "@/components/dashboard/add-balance-dialog";
 import { TopBalanceCard } from "@/components/dashboard/top-balance-card";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { MonthlySpending } from "@/components/dashboard/monthly-spending";
+import { ExpenseReportDialog } from "@/components/dashboard/expense-report-dialog";
+import { Button } from "@/components/ui/button";
+import { useUserStore } from '@/store/user-store';
+import { FileText, FileDown } from 'lucide-react';
+import { downloadExpenseReportPDF } from '@/lib/pdf-report';
+import { customToast } from '@/lib/toast';
 
 export default function DashboardPage() {
+    const isPremium = !!useUserStore((s) => s.membership);
+    const [reportOpen, setReportOpen] = useState(false);
+    const [downloadingPdf, setDownloadingPdf] = useState(false);
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [totalExpense, setTotalExpense] = useState<number>(0);
     const [topCategories, setTopCategories] = useState<{ category: string; totalAmount: number }[]>([]);
@@ -65,13 +74,53 @@ export default function DashboardPage() {
     // Use Budget Left as the Total Balance now that Cash/Invested are removed
     const dummyTotalBalance = dummyBudgetLeft;
 
-
+    const handleDownloadPdf = async () => {
+        if (!isPremium) return;
+        setDownloadingPdf(true);
+        try {
+            await downloadExpenseReportPDF(expenses, 'monthly');
+            customToast.success('Report downloaded');
+        } catch (e) {
+            console.error(e);
+            customToast.error('Failed to download PDF');
+        } finally {
+            setDownloadingPdf(false);
+        }
+    };
 
     return (
         <div className="relative min-h-[calc(100vh-64px)] bg-[#f8fafc] text-slate-800 pb-20">
             <div className="max-w-[1400px] mx-auto p-6 lg:p-8 space-y-8">
 
                 <TopBalanceCard totalBalance={dummyTotalBalance} />
+
+                {isPremium && (
+                    <div className="flex flex-wrap items-center gap-3">
+                        <Button
+                            variant="outline"
+                            className="border-teal-200 text-teal-700 hover:bg-teal-50 hover:border-teal-300"
+                            onClick={() => setReportOpen(true)}
+                        >
+                            <FileText className="h-4 w-4 mr-2" />
+                            View Report
+                        </Button>
+                        <Button
+                            variant="outline"
+                            className="border-teal-200 text-teal-700 hover:bg-teal-50 hover:border-teal-300"
+                            onClick={handleDownloadPdf}
+                            disabled={downloadingPdf || expenses.length === 0}
+                        >
+                            <FileDown className="h-4 w-4 mr-2" />
+                            {downloadingPdf ? 'Downloading…' : 'Download PDF'}
+                        </Button>
+                    </div>
+                )}
+
+                <ExpenseReportDialog
+                    open={reportOpen}
+                    onOpenChange={setReportOpen}
+                    expenses={expenses}
+                />
 
                 <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-8">
                     <RecentTransactions
