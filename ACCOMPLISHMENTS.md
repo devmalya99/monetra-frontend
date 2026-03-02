@@ -61,7 +61,10 @@ We moved beyond simple pages to a fully structured application layout.
 -   **Secure CRUD Operations**:
     -   **Create**: Implemented `AddExpenseDialog` with Zod validation and string-safe payload handling.
     -   **Delete**: Added instant expense removal with confirmation dialogs.
--   **Paginated Transactions List**: Implemented client-side pagination for the Recent Transactions list on the dashboard, displaying **5 expenses per page** with Previous/Next controls, page indicator (e.g. "Page 1 of 3"), and item range (e.g. "1–5 of 14"). Added automatic page reset when the list shrinks (e.g. after delete) to avoid landing on an empty page.
+-   **Dynamic Paginated Transactions List**: Implemented an advanced client-side pagination system for the Recent Transactions list.
+    -   **User Preference**: Users can dynamically choose items per page (5, 10, 20, 50).
+    -   **Persistence**: Selection is automatically synced to `localStorage`, ensuring a consistent experience across sessions.
+    -   **Intelligent Controls**: Features active page indicators, item range displays (e.g., "Showing 1-10 of 24"), and persistent "Next/Prev" navigation buttons. Automatic page resets after deletions prevent empty-state landing.
 -   **Optimized Data Flow**:
     -   Created dedicated `src/lib/api/expenses.ts` module.
     -   Implemented strict TypeScript interfaces (`ApiResponse`, `ExpensesData`) to mirror backend contracts.

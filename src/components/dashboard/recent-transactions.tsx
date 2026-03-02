@@ -17,8 +17,6 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
-const EXPENSES_PER_PAGE = 5;
-
 interface RecentTransactionsProps {
     expenses: Expense[];
     loading: boolean;
@@ -29,11 +27,23 @@ interface RecentTransactionsProps {
 export function RecentTransactions({ expenses, loading, error, onExpenseModified }: RecentTransactionsProps) {
     const [deletingId, setDeletingId] = useState<string | null>(null);
     const [confirmDeleteExpense, setConfirmDeleteExpense] = useState<Expense | null>(null);
+    const [itemsPerPage, setItemsPerPage] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('monetra_expenses_per_page');
+            return saved ? parseInt(saved) : 5;
+        }
+        return 5;
+    });
     const [page, setPage] = useState(1);
 
-    const totalPages = Math.max(1, Math.ceil(expenses.length / EXPENSES_PER_PAGE));
-    const start = (page - 1) * EXPENSES_PER_PAGE;
-    const paginatedExpenses = expenses.slice(start, start + EXPENSES_PER_PAGE);
+    const totalPages = Math.max(1, Math.ceil(expenses.length / itemsPerPage));
+    const start = (page - 1) * itemsPerPage;
+    const paginatedExpenses = expenses.slice(start, start + itemsPerPage);
+
+    // Persist itemsPerPage to localStorage
+    useEffect(() => {
+        localStorage.setItem('monetra_expenses_per_page', itemsPerPage.toString());
+    }, [itemsPerPage]);
 
     // Reset to page 1 when list shrinks (e.g. after delete) and current page would be empty
     useEffect(() => {
@@ -75,6 +85,23 @@ export function RecentTransactions({ expenses, loading, error, onExpenseModified
         <div className="space-y-4">
             <div className="flex items-center justify-between px-1">
                 <h2 className="text-xl font-bold text-slate-800">Recent Transactions</h2>
+                <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Show</span>
+                    <select
+                        value={itemsPerPage}
+                        onChange={(e) => {
+                            setItemsPerPage(Number(e.target.value));
+                            setPage(1);
+                        }}
+                        className="text-[11px] bg-slate-100 border-none text-slate-600 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/10 transition-all font-bold cursor-pointer hover:bg-slate-200"
+                    >
+                        {[5, 10, 20, 50].map((num) => (
+                            <option key={num} value={num}>
+                                {num}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             <Card className="bg-white border-0 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] rounded-2xl overflow-hidden min-h-[400px]">
@@ -88,86 +115,87 @@ export function RecentTransactions({ expenses, loading, error, onExpenseModified
                     <div className="text-slate-400 text-center p-12 text-sm font-medium">No expenses recorded yet.</div>
                 ) : (
                     <>
-                    <div className="divide-y divide-slate-50">
-                        {paginatedExpenses.map((expense) => {
-                            const isIncome = expense.title.toLowerCase().includes('salary') || expense.title.toLowerCase().includes('deposit');
-                            const displayAmount = parseFloat(expense.amount);
+                        <div className="divide-y divide-slate-50">
+                            {paginatedExpenses.map((expense: Expense) => {
+                                const isIncome = expense.title.toLowerCase().includes('salary') || expense.title.toLowerCase().includes('deposit');
+                                const displayAmount = parseFloat(expense.amount);
 
-                            return (
-                                <div key={expense.id} className="flex items-center justify-between p-5 hover:bg-slate-50/50 transition-colors group">
-                                    <div className="flex items-center gap-4">
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${getCategoryColor(expense.category)}`}>
-                                            {getCategoryIcon(expense.category)}
+                                return (
+                                    <div key={expense.id} className="flex items-center justify-between p-5 hover:bg-slate-50/50 transition-colors group">
+                                        <div className="flex items-center gap-4">
+                                            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${getCategoryColor(expense.category)}`}>
+                                                {getCategoryIcon(expense.category)}
+                                            </div>
+                                            <div>
+                                                <h4 className="text-[15px] font-bold text-slate-800 mb-0.5">
+                                                    {expense.title}
+                                                </h4>
+                                                <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
+                                                    <span>{format(new Date(expense.date), 'MMM dd')}</span>
+                                                    <span className="w-1 h-1 rounded-full bg-slate-200"></span>
+                                                    <span>{expense.category}</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 className="text-[15px] font-bold text-slate-800 mb-0.5">
-                                                {expense.title}
-                                            </h4>
-                                            <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
-                                                <span>{format(new Date(expense.date), 'MMM dd')}</span>
-                                                <span className="w-1 h-1 rounded-full bg-slate-200"></span>
-                                                <span>{expense.category}</span>
+                                        <div className="flex items-center gap-4">
+                                            <div className={cn("font-bold text-[15px]", getAmountColor(displayAmount, isIncome))}>
+                                                {isIncome ? '+' : '-'}{formatINR(displayAmount)}
+                                            </div>
+
+                                            {/* Action Buttons - Always visible for mobile accessibility */}
+                                            <div className="flex items-center gap-1">
+                                                <EditExpenseDialog
+                                                    expense={expense}
+                                                    onExpenseUpdated={onExpenseModified}
+                                                    onExpenseDeleted={onExpenseModified}
+                                                />
+                                                <button
+                                                    onClick={() => setConfirmDeleteExpense(expense)}
+                                                    disabled={deletingId === expense.id}
+                                                    className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                                                    title="Delete Expense"
+                                                >
+                                                    {deletingId === expense.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-4">
-                                        <div className={cn("font-bold text-[15px]", getAmountColor(displayAmount, isIncome))}>
-                                            {isIncome ? '+' : '-'}{formatINR(displayAmount)}
-                                        </div>
-
-                                        {/* Action Buttons - Always visible for mobile accessibility */}
-                                        <div className="flex items-center gap-1">
-                                            <EditExpenseDialog
-                                                expense={expense}
-                                                onExpenseUpdated={onExpenseModified}
-                                                onExpenseDeleted={onExpenseModified}
-                                            />
-                                            <button
-                                                onClick={() => setConfirmDeleteExpense(expense)}
-                                                disabled={deletingId === expense.id}
-                                                className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
-                                                title="Delete Expense"
-                                            >
-                                                {deletingId === expense.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                    {totalPages > 1 && (
-                        <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/50">
-                            <span className="text-sm text-slate-500">
-                                Page {page} of {totalPages}
-                                <span className="ml-2 text-slate-400">
-                                    ({start + 1}–{Math.min(start + EXPENSES_PER_PAGE, expenses.length)} of {expenses.length})
-                                </span>
-                            </span>
-                            <div className="flex items-center gap-2">
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                                    disabled={page <= 1}
-                                    className="border-slate-200 text-slate-700 hover:bg-slate-100"
-                                >
-                                    <ChevronLeft className="h-4 w-4 mr-0.5" />
-                                    Previous
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                                    disabled={page >= totalPages}
-                                    className="border-slate-200 text-slate-700 hover:bg-slate-100"
-                                >
-                                    Next
-                                    <ChevronRight className="h-4 w-4 ml-0.5" />
-                                </Button>
-                            </div>
+                                );
+                            })}
                         </div>
-                    )}
+                        {expenses.length > 0 && (
+                            <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/50">
+                                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-tighter">
+                                    Page {page} of {totalPages}
+                                    <span className="ml-2 text-slate-300">|</span>
+                                    <span className="ml-2">
+                                        Showing {start + 1}–{Math.min(start + itemsPerPage, expenses.length)} of {expenses.length}
+                                    </span>
+                                </span>
+                                <div className="flex items-center gap-2">
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                                        disabled={page <= 1}
+                                        className="text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 h-8 px-3 rounded-lg font-bold text-xs transition-all disabled:opacity-30"
+                                    >
+                                        <ChevronLeft className="h-3.5 w-3.5 mr-1" />
+                                        Prev
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                                        disabled={page >= totalPages}
+                                        className="text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 h-8 px-3 rounded-lg font-bold text-xs transition-all disabled:opacity-30"
+                                    >
+                                        Next
+                                        <ChevronRight className="h-3.5 w-3.5 ml-1" />
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
                     </>
                 )}
             </Card>

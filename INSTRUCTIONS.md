@@ -111,6 +111,11 @@ This document outlines the step-by-step workflow and planning for the Monetra fr
   - [x] Created `UserDataFetcher` pure component injected at `(app)/layout.tsx` specifically responsible for hydrating identity state without polluting component markup.
   - [x] App header dropdown created using custom robust Ref-handling tying seamlessly into native Logout hooks and dynamic profile avatars.
   - [x] Connected `/settings` inputs directly to the verified Zustand context to replace mocked John Doe variables.
+### Step 6.9: Dynamic Pagination & Preferences
+  - [x] Implemented client-side pagination for `RecentTransactions` on the dashboard.
+  - [x] Added dynamic "Items Per Page" selector (5, 10, 20, 50).
+  - [x] Integrated `localStorage` persistence for user pagination preferences.
+  - [x] Added automatic page reset logic when data changes (e.g., deletions).
 
 ### Phase 3: Polish & Optimization
 - [ ] **Step 7**: SEO Optimization

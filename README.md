@@ -24,6 +24,7 @@ This is the frontend application for the Monetra project, built with Next.js.
 - **Advanced Analytics**: Interactive charts, spillage insights, and top-spender leaderboards.
 - **Type-Safe Development**: End-to-end TypeScript integration with shared validation schemas.
 - **Performance Optimized**: Next.js 16 with Turbopack and React 19 concurrent features.
+- **Dynamic Pagination**: User-tunable items-per-page with persistent `localStorage` preference.
 - **Responsive Design**: Mobile-first architecture with custom dark mode themes.
 
 ## 🏆 Project Accomplishments

@@ -27,6 +27,7 @@ export default function DashboardPage() {
 
     useEffect(() => {
         console.log('🌟 [STEP: UI Update] -> Loaded Beautiful Premium Dashboard Design!');
+        console.log('📄 [STEP: Dynamic Pagination] -> Initialized Persistent Items Per Page & Next/Prev Navigation!');
     }, []);
 
     const fetchExpenses = useCallback(async () => {
