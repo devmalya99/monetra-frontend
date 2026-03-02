@@ -17,6 +17,7 @@ export interface TransactionRow {
   income: number;
   expense: number;
   isSubtotal?: boolean;
+  notes?: string;
 }
 
 export interface ReportGroup {
@@ -36,6 +37,7 @@ function toRow(expense: Expense): TransactionRow {
     category: expense.category,
     income: asIncome ? amount : 0,
     expense: asIncome ? 0 : amount,
+    notes: expense.notes,
   };
 }
 

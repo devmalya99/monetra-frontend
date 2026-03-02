@@ -75,3 +75,5 @@ We have included a `.vscode/settings.json` file to suppress these warnings:
   "css.lint.unknownAtRules": "ignore"
 }
 ```
+
+-   **Expense Notes**: Added the ability for users to attach optional notes to their expenses during creation and editing, which are displayed in the recent transactions table and the exportable reports.

@@ -28,6 +28,7 @@ const formSchema = z.object({
     title: z.string().min(3, 'Title must be at least 3 characters'),
     category: z.string().min(1, 'Please select a category'),
     date: z.string().refine((val) => !isNaN(Date.parse(val)), 'Invalid date'),
+    notes: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -61,6 +62,7 @@ export function EditExpenseDialog({ expense, onExpenseUpdated, onExpenseDeleted 
             title: expense.title,
             category: expense.category,
             date: new Date(expense.date).toISOString().split('T')[0],
+            notes: expense.notes || '',
         },
     });
 
@@ -74,6 +76,7 @@ export function EditExpenseDialog({ expense, onExpenseUpdated, onExpenseDeleted 
                 category: data.category,
                 amount: parseFloat(data.amount),
                 date: new Date(data.date).toISOString(),
+                notes: data.notes || '',
             });
 
             setOpen(false);
@@ -241,6 +244,23 @@ export function EditExpenseDialog({ expense, onExpenseUpdated, onExpenseDeleted 
                             />
                             {errors.date && (
                                 <p className="text-xs text-red-400 mt-1 font-medium">{errors.date.message}</p>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="notes" className="text-right text-gray-300 font-bold">
+                            Notes
+                        </Label>
+                        <div className="col-span-3">
+                            <Input
+                                id="notes"
+                                placeholder="Optional notes"
+                                className="bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus-visible:ring-emerald-500 font-medium"
+                                {...register('notes')}
+                            />
+                            {errors.notes && (
+                                <p className="text-xs text-red-400 mt-1 font-medium">{errors.notes.message}</p>
                             )}
                         </div>
                     </div>

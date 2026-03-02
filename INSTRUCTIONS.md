@@ -118,6 +118,10 @@ This document outlines the step-by-step workflow and planning for the Monetra fr
   - [x] Added automatic page reset logic when data changes (e.g., deletions).
 
 ### Phase 3: Polish & Optimization
+### Step 6.10: Expense Notes Integration (Planned)
+  - [ ] Update frontend `AddExpenseDialog` Zod schema to include `notes` API payload.
+  - [ ] Add `<Textarea>` input field in the expense dialogue for optional descriptive notes.
+  - [ ] Enhance expense list item or details view to dynamically display the attached notes.
 - [ ] **Step 7**: SEO Optimization
   - Meta tags
   - Sitemap
@@ -128,3 +132,5 @@ This document outlines the step-by-step workflow and planning for the Monetra fr
 ## Current Status
 - **Current Step**: Phase 2, Step 6.3 (Completed)
 - **Next Action**: Proceed to further polishing or backend refinement.
+
+-   **Expense Notes**: Added the ability for users to attach optional notes to their expenses during creation and editing, which are displayed in the recent transactions table and the exportable reports.

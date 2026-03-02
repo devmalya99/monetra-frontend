@@ -135,6 +135,11 @@ export function RecentTransactions({ expenses, loading, error, onExpenseModified
                                                     <span className="w-1 h-1 rounded-full bg-slate-200"></span>
                                                     <span>{expense.category}</span>
                                                 </div>
+                                                {expense.notes && (
+                                                    <div className="text-xs text-slate-500 mt-0.5 italic truncate max-w-[200px] sm:max-w-[300px]">
+                                                        {expense.notes}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-4">

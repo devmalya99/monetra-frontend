@@ -7,6 +7,7 @@ export interface Expense {
     amount: string;
     category: string;
     date: string;
+    notes?: string;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -16,6 +17,7 @@ export interface AddExpensePayload {
     amount: string | number;
     category: string;
     date: string;
+    notes?: string;
 }
 
 export interface UpdateExpensePayload {
@@ -23,6 +25,7 @@ export interface UpdateExpensePayload {
     amount: number;
     category: string;
     date: string;
+    notes?: string;
 }
 
 interface ApiResponse<T> {

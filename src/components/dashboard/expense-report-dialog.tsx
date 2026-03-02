@@ -147,7 +147,10 @@ export function ExpenseReportDialog({ open, onOpenChange, expenses, ...props }: 
                           {group.rows.map((row, i) => (
                             <tr key={`${row.date}-${row.description}-${i}`} className="border-b border-slate-100">
                               <td className="py-2 px-3 text-slate-600">{row.dateLabel}</td>
-                              <td className="py-2 px-3 text-slate-800">{row.description}</td>
+                              <td className="py-2 px-3 text-slate-800">
+                                {row.description}
+                                {row.notes && <span className="block text-xs text-slate-500 italic max-w-[200px] truncate mt-0.5">{row.notes}</span>}
+                              </td>
                               <td className="py-2 px-3 text-slate-600">{row.category}</td>
                               <td className="py-2 px-3 text-right text-emerald-600 font-medium">
                                 {row.income > 0 ? formatINR(row.income) : '—'}

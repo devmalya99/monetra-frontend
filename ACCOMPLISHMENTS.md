@@ -134,3 +134,5 @@ This section details the actual product features planned for future production v
 -   **Family Plan & Multi-User Accounts**: Shared wallets for couples and families.
 -   **Dark Mode Analytics**: Complete custom themes across chart libraries.
 -   **End-To-End Testing Pipeline**: Cypress or Playwright tests enforcing functionality across all crucial financial paths.
+
+-   **Expense Notes**: Added the ability for users to attach optional notes to their expenses during creation and editing, which are displayed in the recent transactions table and the exportable reports.
